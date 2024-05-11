@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'mainApp',
+    'login_signup',
+    'foto_crud',
 ]
 
 MIDDLEWARE = [
