@@ -1,0 +1,116 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zxx">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Phozogy Template">
+    <meta name="keywords" content="Phozogy, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Foto | Home</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Quantico:400,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&display=swap" rel="stylesheet">
+
+    <!-- Css Styles -->
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/elegant-icons.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/magnific-popup.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/slicknav.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}" type="text/css">
+</head>
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header Section Begin -->
+    <header class="header-section">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="logo" style="padding: 20px 0;">
+                        <a href="{% url 'home' %}">
+                            <img src="{% static 'img/logo-white.png' %}" alt="">
+                        </a>
+                    </div>
+                    <nav class="nav-menu mobile-menu float-right">
+                        <ul>
+                            <li class="mr-xl-5">
+                                <form action="">
+                                    <div class="input-group mb-3" style="width: 28.125rem">
+                                        <input type="text" class="form-control" placeholder="Nhà sáng tạo bạn muốn tìm kiếm..." aria-label="Recipient's username" aria-describedby="button-addon2">
+                                        <div class="input-group-append">
+                                          <button class="btn btn-outline-secondary" type="submit" id="button-addon2"><i class="fa fa-search"></i></button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </li>
+                            <li><a href="{% url 'home' %}">Trang chủ</a></li>
+                            <li><a href="{% url 'gallery' %}">Khám phá</a></li>
+                            <li><a href="{% url 'sign-in' %}">Đăng nhập</a></li>
+                            <!-- <li><a href="./services.html">Services</a></li>
+                            <li><a href="./pricing.html">Pricing</a></li>
+                            <li><a href="./portfolio.html">Portfolio</a></li>
+                            <li><a href="./blog.html">Blog</a></li>
+                            <li><a href="#">Pages</a>
+                                <ul class="dropdown">
+                                    <li><a href="./gallery.html">Gallery</a></li>
+                                    <li><a href="./portfolio-details.html">Portfolio Details</a></li>
+                                    <li><a href="./blog-details.html">Blog Details</a></li>
+                                </ul>
+                            </li>
+                            <li><a href="./contact.html">Contact</a></li> -->
+                        </ul>
+                    </nav>
+                    <div id="mobile-menu-wrap"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- Header End -->
+
+    <!-- Hero Section Begin -->
+    {% block hero %} {% endblock hero %}
+    <!-- Hero Section End -->
+
+    <!-- Content Section Begin -->
+    {% block content %} {% endblock content %}
+    <!-- Content Section End -->
+
+    <!-- Gallery Section Begin -->
+    {% block gallery %} {% endblock gallery %}
+    <!-- Gallery Section End -->
+
+    <!-- Profile Manager Section Begin -->
+    {% block profile-manager %} {% endblock profile-manager %}
+    <!-- Profile Manager Section End -->
+
+    {% block my-albums %} {% endblock my-albums %}
+
+    <!-- Footer Section Begin -->
+    {% block footer %} {% endblock footer %}
+    <!-- Footer Section End -->
+
+
+    <!-- Js Plugins -->
+    <script class="jsbin" src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'js/isotope.pkgd.min.js' %}"></script>
+    <script src="{% static 'js/masonry.pkgd.min.js' %}"></script>
+    <script src="{% static 'js/jquery.slicknav.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+
+</html>

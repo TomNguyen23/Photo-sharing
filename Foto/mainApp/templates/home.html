@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block hero %}
+<section class="hero-section">
+    <div class="hs-slider owl-carousel">
+        <div class="hs-item set-bg" data-setbg="{% static 'img/hero/superhero-1.jpg' %}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="hs-text">
+                            <h2>Foto Studio</h2>
+                            <p>Kho ảnh miễn phí tuyệt nhất do những người sáng tạo tài năng chia sẻ.</p>
+                            <a href="#" class="primary-btn">Contact us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hs-item set-bg" data-setbg="{% static 'img/hero/superhero-2.jpg' %}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="hs-text">
+                            <h2>Foto Studio</h2>
+                            <p>Nơi lưu trữ và chia sẻ tác phẩm của bạn với mọi người<br /> Có thể bạn sẽ tìm được những người cùng sở thích
+                                và phong cách.</p>
+                            <a href="#" class="primary-btn">Contact us</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock hero %}
+
+{% block content %}
+<section class="portfolio-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="section-title">
+                    <h2>Khám phá những điều tuyệt vời nhất với Foto</h2>
+                </div>
+                <!-- <div class="filter-controls">
+                    <ul>
+                        <li class="active" data-filter="*">Chung</li>
+                        <li data-filter=".fashion">Thời trang</li>
+                        <li data-filter=".lifestyle">Lối sống</li>
+                        <li data-filter=".natural">Thiên nhiên</li>
+                        <li data-filter=".animal">Động vật</li>
+                        <li data-filter=".city">Đô thị</li>
+                        <li data-filter=".country">Làng quê</li>
+                        <li data-filter=".other">Khác</li>
+                    </ul>
+                </div> -->
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12 p-0">
+                <div class="portfolio-filter">
+                    <div class="pf-item set-bg fashion" data-setbg="{% static 'img/portfolio/pf-1.jpg' %}">
+                        <div type="button" class="pf-icon" data-toggle="modal" data-target="#exampleModalCenter">
+                            <span class="icon_plus"></span>
+                        </div>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <form class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header border-bottom-0">
+                                    <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body d-flex justify-content-center">
+                                    <img src="{% static 'img/portfolio/pf-1.jpg' %}" class="gf-icon" alt="">
+                                </div>
+                                <div class="modal-footer input-group border-top-0">
+                                    <input type="text" hidden value=" ">
+                                    <select class="custom-select col-3 rounded">
+                                        <option selected>Lưu vào thư viện</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                    <button type="button" class="btn btn-primary">Lưu</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- Modal end -->
+                    <!-- <div class="pf-item large-width large-height set-bg lifestyle"
+                        data-setbg="img/portfolio/pf-2.jpg">
+                        <a href="img/portfolio/pf-2.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+                    <div class="pf-item large-width set-bg natural" data-setbg="img/portfolio/pf-3.jpg">
+                        <a href="img/portfolio/pf-3.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+                    <div class="pf-item large-height set-bg wedding" data-setbg="img/portfolio/pf-4.jpg">
+                        <a href="img/portfolio/pf-4.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+                    <div class="pf-item set-bg lifestyle" data-setbg="img/portfolio/pf-7.jpg">
+                        <a href="img/portfolio/pf-7.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+                    <div class="pf-item set-bg natural" data-setbg="img/portfolio/pf-8.jpg">
+                        <a href="img/portfolio/pf-8.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+                    <div class="pf-item set-bg videos" data-setbg="img/portfolio/pf-5.jpg">
+                        <a href="img/portfolio/pf-5.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+                    <div class="pf-item set-bg fashion" data-setbg="img/portfolio/pf-6.jpg">
+                        <a href="img/portfolio/pf-6.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+                    <div class="pf-item large-width set-bg videos" data-setbg="img/portfolio/pf-10.jpg">
+                        <a href="img/portfolio/pf-10.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+                    <div class="pf-item set-bg fashion" data-setbg="img/portfolio/pf-11.jpg">
+                        <a href="img/portfolio/pf-11.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div>
+                    <div class="pf-item large-width large-height set-bg wedding"
+                        data-setbg="img/portfolio/pf-9.jpg">
+                        <a href="img/portfolio/pf-9.jpg" class="pf-icon image-popup"><span class="icon_plus"></span></a>
+                        <div class="pf-text">
+                            <h4>COLORS SPEAK</h4>
+                            <span>Fashion</span>
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="load-more-btn">
+        <a href="#">Load More</a>
+    </div>
+</section>
+{% endblock content %}
+
+{% block footer %}
+<footer class="footer-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="fs-about">
+                    <div class="fa-logo">
+                        <a href="#">
+                            <img src="{% static 'img/logo-white.png' %}" alt="">
+                        </a>
+                    </div>
+                    <p>Ảnh do những người sáng tạo tài năng chia sẻ.</p>
+                    <div class="fa-social">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                        <a href="#"><i class="fa fa-twitter"></i></a>
+                        <a href="#"><i class="fa fa-youtube-play"></i></a>
+                        <a href="#"><i class="fa fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="fs-widget">
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="fs-widget">
+                    <h5>Truy cập nhanh</h5>
+                    <ul>
+                        <li><a href="#">Trang chủ</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                    <ul>
+                        <li><a href="#">Gallery</a></li>
+                        <li><a href="#">Portfolio</a></li>
+                        <li><a href="#">Services</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6">
+                <div class="fs-widget">
+                    <h5>Bạn gặp vấn đề?</h5>
+                    <p>email: FotoStudio@gmail.com</p>
+                    <p>phone: 0987654321</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</footer>
+{% endblock footer %}

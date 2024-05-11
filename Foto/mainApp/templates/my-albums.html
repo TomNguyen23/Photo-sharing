@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block profile-manager %}
+<section>
+    <div class="user">
+        <img src="{% static 'img/user.png' %}" alt="">
+        <h2 class="username">Username</h2>
+
+        <a class="upload-btn" href="">Tải ảnh lên</a>
+    </div>
+
+    <div class="album container d-flex">
+        <a class="my-albums font-weight-bold" href="">Ảnh đã tải lên</a>
+        <a class="my-albums font-weight-bold" href="{% url 'my-albums' %}">Album của tôi</a>
+    </div>
+</section>
+{% endblock profile-manager %}
+
+{% block my-albums %}
+<section class="container">
+    <table class="table table-borderless">
+        <thead>
+          <!-- <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+          </tr> -->
+        </thead>
+        <tbody>
+          <tr>
+            <td class="album-icon"><i class="fa fa-folder"></i></td>
+            <td>Wibu never die</td>
+            <td>@mdo</td>
+          </tr>
+        </tbody>
+      </table>
+</section>
+{% endblock my-albums %}
