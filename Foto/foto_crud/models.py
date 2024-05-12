@@ -30,6 +30,7 @@ class Album(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class AlbumPhoto(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     album = models.ForeignKey(Album, on_delete=models.CASCADE)
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE)
 
