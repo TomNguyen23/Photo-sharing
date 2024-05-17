@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
+from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
 
 # Create your views here.
 def upload_photo(request):

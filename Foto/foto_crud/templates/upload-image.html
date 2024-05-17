@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block upload-image %}
+<section class="container mr-3 mt-3">
+    <div class="upload-title">
+        Chia sẻ ảnh khiến cả thế giới đều yêu thích
+    </div>
+
+    <div class="d-flex">
+        <div class="sub-container">
+            <input type="file" id="file" accept="image/*" hidden>
+            <div class="img-area" data-img="">
+                <i class='bx bxs-cloud-upload icon'></i>
+                <h3>Tải ảnh lên</h3>
+                <p>Kích thước ảnh phải dưới <span>2MB</span></p>
+            </div>
+            <button class="select-image">Chọn ảnh tải lên</button>
+        </div>
+
+        <div class="w-100">
+            <div class="form-group">
+                <label>Tác giả</label> <br>
+                <input type="text" class="author" value="hế lô mấy cưng" disabled>
+            </div>
+    
+            <div class="form-group">
+                <label>Chủ đề</label> <br>
+                <select class="select2" multiple="multiple" data-placeholder="Chọn chủ đề">
+                    <option>Thời trang</option>
+                    <option>Lối sống</option>
+                    <option>Thiên nhiên</option>
+                    <option>Động vật</option>
+                    <option>Đô thị</option>
+                    <option>Làng quê</option>
+                    <option>Khác</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <button class="upload-btn">Tải lên</button>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock upload-image %}
+
+{% block page_script %}
+
+<script>
+    const selectImage = document.querySelector('.select-image');
+    const inputFile = document.querySelector('#file');
+    const imgArea = document.querySelector('.img-area');
+    const uploadBtn = document.querySelector('.upload-btn');
+
+    $(document).ready(function () {
+        $('.select2').select2();
+    });
+    selectImage.addEventListener('click', function () {
+        inputFile.click();
+    })
+
+    inputFile.addEventListener('change', function () {
+        const image = this.files[0]
+        if(image.size < 2000000) {
+            const reader = new FileReader();
+            reader.onload = ()=> {
+                const allImg = imgArea.querySelectorAll('img');
+                allImg.forEach(item=> item.remove());
+                const imgUrl = reader.result;
+                const img = document.createElement('img');
+                img.src = imgUrl;
+                imgArea.appendChild(img);
+                imgArea.classList.add('active');
+                imgArea.dataset.img = image.name;
+            }
+            reader.readAsDataURL(image);
+        } else {
+            alert("Image size more than 2MB");
+        }
+    })
+
+    uploadBtn.addEventListener('click', function () {
+        const img = document.querySelector('#file').value;
+        const author = document.querySelector('.author').value;
+        const theme = $('.select2').val();
+
+        let formData = new FormData();
+        formData.append('img', img);
+        formData.append('author', author);
+        formData.append('theme', theme);
+
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: formData
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            if (data.status === 'success') {
+                window.location.reload();
+            }
+        });
+    })
+
+</script>
+
+{% endblock %}

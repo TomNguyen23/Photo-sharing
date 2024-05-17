@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block profile-manager %}
+<section>
+    <div class="user">
+        <img src="{% static 'img/user.png' %}" alt="">
+        <h2 class="username">{{user}}</h2>
+
+        <a class="upload-btn" href="{% url 'upload-photo' %}">Tải ảnh lên</a>
+    </div>
+
+    <div class="album container d-flex mr-3">
+        <a id="activate" class="my-albums font-weight-bold" href="{% url 'profile' %}">Ảnh đã tải lên</a>
+        <a class="my-albums font-weight-bold" href="{% url 'my-albums' %}">Album của tôi</a>
+    </div>
+</section>
+{% endblock profile-manager %}
+
+{% block my-photos %}
+<section class="container mr-3 mt-3">
+    <div class="row">
+        <div class="col-lg-12 p-0">
+            <div class="gallery-filter">
+                {% for photo in photos %}
+                <div class="gf-item small-height set-bg lifestyle" data-setbg="{{photo.photo_link}}">
+                    <a href="{{photo.photo_link}}" class="gf-icon image-popup"><span
+                            class="icon_plus"></span>
+                    </a>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock my-photos %}

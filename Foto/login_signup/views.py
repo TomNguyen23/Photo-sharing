@@ -13,15 +13,15 @@ def login(request):
         hashed_password = hash_password(password)
 
         if user is None:
-            return render(request, 'login_signup/login.html', {'error': 'Không tìm thấy người dùng'})
+            return render(request, 'sign-in.html', {'error': 'Không tìm thấy người dùng'})
         if user.password != hashed_password:
-            return render(request, 'login_signup/login.html', {'error': 'Sai mật khẩu'})
+            return render(request, 'sign-in.html', {'error': 'Sai mật khẩu'})
         
         response = HttpResponseRedirect('/')
         response.set_cookie('cookie', user.cookies)
         return response
     else:
-        return render(request, 'login_signup/login.html')
+        return render(request, 'sign-in.html')
     
 def signup(request):
     if request.method == 'POST':
@@ -29,12 +29,12 @@ def signup(request):
         password = request.POST['password']
 
         if not valid(password):
-            return render(request, 'login_signup/signup.html', {'error': 'Mật khẩu phải chứa ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số'})
+            return render(request, 'sign-up.html', {'error': 'Mật khẩu phải chứa ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số'})
 
         user = User.objects.get(username=username).first()
         
         if user is not None:
-            return render(request, 'login_signup/signup.html', {'error': 'Tên người dùng đã tồn tại'})
+            return render(request, 'sign-up.html', {'error': 'Tên người dùng đã tồn tại'})
         
         hashed_password = hash_password(password)
         cookies = hash_password(username + password)
@@ -45,7 +45,7 @@ def signup(request):
         response.set_cookie('cookie', cookies)
         return response
     else:
-        return render(request, 'login_signup/signup.html')
+        return render(request, 'sign-up.html')
     
 def logout(request):
     response = HttpResponseRedirect('/')

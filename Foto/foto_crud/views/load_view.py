@@ -1,6 +1,11 @@
 from django.shortcuts import render
 
-from models import Photo, SavedPhoto, User, Topic, PhotoTopic, Album, AlbumPhoto
+# from ..models import Photo, SavedPhoto, User, Topic, PhotoTopic, Album, AlbumPhoto
+from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
+
+def home(request):
+    user = request.user
+    return render(request, 'home.html', {'user': user})
 
 def load_own_photo(request):
     user = request.COOKIES['cookie']
@@ -12,7 +17,8 @@ def load_own_photo(request):
     for photo in photos:
         link = Photo.objects.get(photo_id=photo.photo).first().photo_link
         result.append(link)
-    return render(request, 'foto_crud/load_own_photo.html', {'photos': result})
+    return render(request, 'profile-manager.html', {'user': user,
+                                                    'photos': result})
 
 def load_other_photo(request):
     author = request.GET['author']
@@ -33,7 +39,8 @@ def load_album(request):
     result = []
     for album in albums:
         result.append(album.album_name)
-    return render(request, 'foto_crud/load_album.html', {'albums': result})
+    return render(request, 'my-albums.html', {'user': user,
+                                              'albums': result})
 
 def load_other_album(request):
     author = request.GET['author']
@@ -43,3 +50,6 @@ def load_other_album(request):
     for album in albums:
         result.append(album.album_name)
     return render(request, 'foto_crud/load_other_album.html', {'albums': result})
+
+def view_upload_photo(request):
+    return render(request, 'upload-image.html')

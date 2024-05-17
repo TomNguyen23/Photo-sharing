@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block profile-manager %}
+<section>
+    <div class="user">
+        <img src="{% static 'img/user.png' %}" alt="">
+        <h2 class="username">{{user}}</h2>
+
+        <!-- <a class="upload-btn" href="">Thêm album</a> -->
+        <button type="button" class="upload-btn" data-toggle="modal" data-target="#newAlbum">
+          Thêm album
+        </button>
+    </div>
+
+    <div class="album container d-flex">
+        <a class="my-albums font-weight-bold" href="{% url 'profile' %}">Ảnh đã tải lên</a>
+        <a id="activate" class="my-albums font-weight-bold" href="{% url 'my-albums' %}">Album của tôi</a>
+    </div>
+
+    <!-- Modal create new album-->
+    <div class="modal fade" id="newAlbum" tabindex="-1" role="dialog" aria-labelledby="newAlbum" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+              <div class="modal-header border-bottom-0">
+                  <h5 class="modal-title" id="exampleModalCenterTitle">Tạo album mới</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                  </button>
+              </div>
+              <div class="modal-body d-flex justify-content-center">
+                  <input type="text" class="form-control new-album" placeholder="Tên album" aria-label="Tên album" aria-describedby="basic-addon1">
+              </div>
+              <div class="modal-footer input-group border-top-0">
+                  <button class="btn btn-primary new-album-btn">Tạo album</button>
+              </div>
+          </div>
+      </div>
+  </div>
+  <!-- Modal end -->
+</section>
+{% endblock profile-manager %}
+
+{% block my-albums %}
+<section class="container">
+    <table class="table table-borderless">
+        <tbody>
+            {% for album in albums %}
+            <tr class="row">
+                <td class="album-icon col-11">
+                  <a class="album-link" href="">
+                    <i class="fa fa-folder"></i> {{ album.album_name }}
+                  </a>
+                </td>
+                <td class="col"><a href="" class="btn btn-danger text-white font-weight-bold">Xóa</a></td>
+            </tr>
+            {% endfor %}
+            
+          </tbody>
+      </table>
+</section>
+{% endblock my-albums %}
+
+{% block page_script %}
+
+<script>
+    const newAlbumBtn = document.querySelector('.new-album-btn');
+
+    newAlbumBtn.addEventListener('click', function () {
+        const newAlbum = document.querySelector('.new-album').value;
+
+        let formData = new FormData();
+        formData.append('new-album', newAlbum);
+
+        
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+            body: formData
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            if (data.status === 'success') {
+                window.location.reload();
+            }
+        });
+    })
+
+</script>
+
+{% endblock %}
