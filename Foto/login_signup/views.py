@@ -7,8 +7,8 @@ from foto_crud.models import User
 def login(request):
     if request.method == 'POST':
         username = request.POST['username']
-        password = request.POST['password']
-        user = User.objects.get(username=username).first()
+        password = request.POST['pass']
+        user = User.objects.filter(username=username).first()
 
         hashed_password = hash_password(password)
 
@@ -26,15 +26,15 @@ def login(request):
 def signup(request):
     if request.method == 'POST':
         username = request.POST['username']
-        password = request.POST['password']
+        password = request.POST['pass']
 
         if not valid(password):
             return render(request, 'sign-up.html', {'error': 'Mật khẩu phải chứa ít nhất 8 ký tự, 1 chữ hoa, 1 chữ thường và 1 số'})
 
-        user = User.objects.get(username=username).first()
+        user = User.objects.filter(username=username).first()
         
-        if user is not None:
-            return render(request, 'sign-up.html', {'error': 'Tên người dùng đã tồn tại'})
+        if user:
+            return render(request, 'sign-up.html', {'error': str(username) + ' đã tồn tại'})
         
         hashed_password = hash_password(password)
         cookies = hash_password(username + password)
@@ -55,7 +55,7 @@ def logout(request):
 def hash_password(password):
     password = password.encode('utf-8')
     hashing = hashlib.md5()
-    hashing = hashing.update(password.encode())
+    hashing.update(password)
     return hashing.hexdigest()
         
 def valid(password):

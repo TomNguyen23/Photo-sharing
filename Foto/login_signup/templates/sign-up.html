@@ -33,7 +33,8 @@
                         <h2 class="form-title">Tạo tài khoản</h2>
 
                         <!-- Sign up form -->
-                        <form method="POST" class="register-form" id="register-form">
+                        <form method="POST" class="register-form" id="register-form" action="">
+                            {% csrf_token %}
                             <div class="form-group">
                                 <label for="username"><i class="fa fa-user"></i></label>
                                 <input type="text" name="username" id="username" placeholder="Tên đăng nhập"/>
@@ -63,6 +64,11 @@
         </section>
 
     </div>
+    {% if error %}
+        <script>
+            alert('{{ error }}');
+        </script>
+    {% endif %}
 
     <!-- JS -->
     <script src="vendor/jquery/jquery.min.js"></script>

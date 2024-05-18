@@ -1,46 +1,68 @@
+import os
 from django.shortcuts import render
 
+from foto_crud.upload_image import ImgurUpload
+
 from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
+import json
+from django.http import JsonResponse
 
 # Create your views here.
 def upload_photo(request):
     if request.method == 'GET': 
-        return render(request, 'foto_crud/upload_photo.html')
+        user = request.COOKIES['cookie']
+        user = User.objects.filter(cookies=user).first().username
+        return render(request, 'upload-image.html', {'user': user})
     else:
-        photo = request.FILES['photo']
-        photo_link = 'photos/' + photo.name
-        with open(photo_link, 'wb+') as destination:
+        photo = request.FILES['img']
+        photo_saved_link = 'E:\DUT Courses\Academic year r3\Semester 2\Lập trình Python\Photo-sharing\Foto\photos/' + photo.name
+        with open(photo_saved_link, 'wb+') as destination:
             for chunk in photo.chunks():
                 destination.write(chunk)
+
+        photo = photo_saved_link
+
+        imgur = ImgurUpload()
+        try:
+            photo_link = imgur.upload_image_from_image_path(photo)
+        except:
+            return JsonResponse({'message': 'Upload ảnh thất bại'})
+        print(photo_link)
+        # delete photo after upload
+        os.remove(photo_saved_link)
+
         author = request.COOKIES['cookie']
-        author = User.objects.get(cookies=author).first()
+        author = User.objects.filter(cookies=author).first()
 
         photo = Photo(photo_link=photo_link, author=author)
         photo.save()
 
-        topic = request.POST['topic']
-        topic = Topic.objects.get(topic_name=topic).all()
+        topics_uploaded = request.POST['theme'].split(',')
+        print(topics_uploaded)
+        topics = []
+        for t in topics_uploaded:
+            if Topic.objects.filter(topic_name=t).first() is None:
+                topic = Topic(topic_name=t)
+                topic.save()
+                topics.append(topic)
+            else:
+                topics.append(Topic.objects.filter(topic_name=t).first())
 
-        for t in topic:
-            photo_topic = PhotoTopic(photo=photo, topic=t)
+        for t in topics:
+            photo_topic = PhotoTopic(photo_id=photo.photo_id, topic_id=t.topic_id)
             photo_topic.save()
 
-        album = request.POST['album']
-        if album:
-            album = Album.objects.get(album_name=album, author=author).first()
-            album_photo = AlbumPhoto(album=album, photo=photo, user=author)
-            album_photo.save()
-        else:
-            album_name = 'Tất cả ảnh của ' + author.username
-            # create album if not exist
-            album = Album.objects.get(album_name=album_name, author=author).first()
-            if album is None:
-                album = Album(album_name=album_name, author=author)
-                album.save()
-            album_photo = AlbumPhoto(album=album, photo=photo, user=author)
-            album_photo.save()
+        album_name = 'Tất cả ảnh đã upload của ' + author.username
+        # create album if not exist
+        album = Album.objects.filter(album_name=album_name, author=author).first()
+        if album is None:
+            album = Album(album_name=album_name, author=author)
+            album.save()
+        album_photo = AlbumPhoto(album=album, photo=photo, user=author)
+        album_photo.save()
 
-        return render(request, 'foto_crud/upload_photo.html', {'message': 'Upload ảnh thành công'})
+        return JsonResponse({'status': 'success'})
+        
     
 def save_photo(request):
     photo_id = request.GET['photo_id']
