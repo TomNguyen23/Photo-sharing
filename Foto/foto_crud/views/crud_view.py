@@ -9,10 +9,8 @@ from django.http import JsonResponse
 
 # Create your views here.
 def upload_photo(request):
-    if request.method == 'filter': 
-        user = request.COOKIES['cookie']
-        user = User.objects.filter(cookies=user).first().username
-        return render(request, 'upload-image.html', {'user': user})
+    if request.method == 'GET': 
+        return render(request, 'foto_crud/upload_photo.html')
     else:
         photo = request.FILES['img']
         photo_saved_link = 'E:\DUT Courses\Academic year r3\Semester 2\Lập trình Python\Photo-sharing\Foto\photos/' + photo.name
@@ -53,16 +51,19 @@ def upload_photo(request):
             photo_topic.save()
 
         album = request.POST['album']
-        album = Album.objects.filter(album_name=album, author=author).first()
-        if album is None:
-            album_name = 'Tất cả ảnh đã upload của ' + author.username
+        if album:
+            album = Album.objects.get(album_name=album, author=author).first()
+            album_photo = AlbumPhoto(album=album, photo=photo, user=author)
+            album_photo.save()
+        else:
+            album_name = 'Tất cả ảnh của ' + author.username
             # create album if not exist
-            album = Album.objects.filter(album_name=album_name, author=author).first()
+            album = Album.objects.get(album_name=album_name, author=author).first()
             if album is None:
                 album = Album(album_name=album_name, author=author)
                 album.save()
-        album_photo = AlbumPhoto(album=album, photo=photo, user=author)
-        album_photo.save()
+            album_photo = AlbumPhoto(album=album, photo=photo, user=author)
+            album_photo.save()
 
         return JsonResponse({'status': 'success'})
         
