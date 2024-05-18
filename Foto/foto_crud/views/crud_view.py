@@ -10,7 +10,7 @@ from django.http import JsonResponse
 # Create your views here.
 def upload_photo(request):
     if request.method == 'GET': 
-        return render(request, 'foto_crud/upload_photo.html')
+        return render(request, 'upload-image.html')
     else:
         photo = request.FILES['img']
         photo_saved_link = 'E:\DUT Courses\Academic year r3\Semester 2\Lập trình Python\Photo-sharing\Foto\photos/' + photo.name
