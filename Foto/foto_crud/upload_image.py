@@ -27,7 +27,7 @@ class ImgurUpload:
 
 
         # url = response.json()["data"]["link"]
-        return response.json()
+        return response.json()['data']['link']
     
     def upload_image_from_file(self, file):
         data = file.read()
@@ -41,17 +41,4 @@ class ImgurUpload:
         url = response.json()["data"]["link"]
         return url
     
-imgur = ImgurUpload()
-
-# Upload all file in Daniel folder, write the result in Daniel/Daniel.txt
-import os
-path = "Daniel"
-files = os.listdir(path)
-with open("Daniel/Daniel.txt", "w") as file:
-    for f in files:
-        try: 
-            file.write(f + " : " + imgur.upload_image_from_image_path(path + "/" + f)['data']['link'] + "\n")
-        except:
-            continue
-
 

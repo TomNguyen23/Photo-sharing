@@ -21,7 +21,7 @@
         <div class="w-100">
             <div class="form-group">
                 <label>Tác giả</label> <br>
-                <input type="text" class="author" value="hế lô mấy cưng" disabled>
+                <input type="text" class="author" value="{{user}}" disabled>
             </div>
     
             <div class="form-group">
@@ -82,7 +82,7 @@
     })
 
     uploadBtn.addEventListener('click', function () {
-        const img = document.querySelector('#file').value;
+        const img = document.querySelector('#file').files[0];
         const author = document.querySelector('.author').value;
         const theme = $('.select2').val();
 
@@ -90,7 +90,9 @@
         formData.append('img', img);
         formData.append('author', author);
         formData.append('theme', theme);
+        formData.append('album', '')
 
+        let url = "/upload-photo/";
 
         fetch(url, {
             method: 'POST',
@@ -100,8 +102,9 @@
             body: formData
         }).then(response => {
             return response.json();
-        }).then(data => {
-            if (data.status === 'success') {
+        }).then(status => {
+            console.log(status);
+            if(status['status'] === 'success') {
                 window.location.reload();
             }
         });

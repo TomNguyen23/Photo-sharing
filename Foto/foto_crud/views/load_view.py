@@ -9,47 +9,42 @@ def home(request):
 
 def load_own_photo(request):
     user = request.COOKIES['cookie']
-    user = User.objects.get(cookies=user).first()
-    album = request.GET['album']
-    album = Album.objects.get(album_name=album, author=user).first()
-    photos = AlbumPhoto.objects.filter(album=album).all()
+    user = User.objects.filter(cookies=user).first().username
+    photos = AlbumPhoto.objects.filter(user_id=user).all()
     result = []
     for photo in photos:
-        link = Photo.objects.get(photo_id=photo.photo).first().photo_link
+        link = Photo.objects.filter(photo_id=photo.photo_id).first().photo_link
         result.append(link)
     return render(request, 'profile-manager.html', {'user': user,
                                                     'photos': result})
 
 def load_other_photo(request):
-    author = request.GET['author']
-    author = User.objects.get(username=author).first()
-    album = request.GET['album']
-    album = Album.objects.get(album_name=album, author=author).first()
+    author = request.filter['author']
+    author = User.objects.filter(username=author).first()
+    album = request.get['album']
+    album = Album.objects.filter(album_name=album, author=author).first()
     photos = AlbumPhoto.objects.filter(album=album, user=author).all()
     result = []
     for photo in photos:
-        link = Photo.objects.get(photo_id=photo.photo).first().photo_link
+        link = Photo.objects.filter(photo_id=photo.photo).first().photo_link
         result.append(link)
     return render(request, 'foto_crud/load_other_photo.html', {'photos': result})
 
 def load_album(request):
     user = request.COOKIES['cookie']
-    user = User.objects.get(cookies=user).first()
+    user = User.objects.filter(cookies=user).first()
     albums = Album.objects.filter(author=user).all()
     result = []
     for album in albums:
         result.append(album.album_name)
-    return render(request, 'my-albums.html', {'user': user,
-                                              'albums': result})
+    return render(request, 'my-albums.html', {'user': user, 'albums': result})
 
 def load_other_album(request):
-    author = request.GET['author']
-    author = User.objects.get(username=author).first()
+    author = request.get['author']
+    author = User.objects.filter(username=author).first()
     albums = Album.objects.filter(author=author).all()
     result = []
     for album in albums:
         result.append(album.album_name)
     return render(request, 'foto_crud/load_other_album.html', {'albums': result})
 
-def view_upload_photo(request):
-    return render(request, 'upload-image.html')

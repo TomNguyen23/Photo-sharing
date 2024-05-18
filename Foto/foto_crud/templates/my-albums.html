@@ -48,9 +48,9 @@
             {% for album in albums %}
             <tr class="row">
                 <td class="album-icon col-11">
-                  <a class="album-link" href="">
-                    <i class="fa fa-folder"></i> {{ album.album_name }}
-                  </a>
+                    <a class="album-link" href="">
+                        <i class="fa fa-folder"></i> {{album}}
+                    </a>
                 </td>
                 <td class="col"><a href="" class="btn btn-danger text-white font-weight-bold">Xóa</a></td>
             </tr>
@@ -72,7 +72,7 @@
         let formData = new FormData();
         formData.append('new-album', newAlbum);
 
-        
+        let url = '/create-album/';
         fetch(url, {
             method: 'POST',
             headers: {
@@ -82,8 +82,12 @@
         }).then(response => {
             return response.json();
         }).then(data => {
-            if (data.status === 'success') {
-                window.location.reload();
+            if (data['status'] === 'success') {
+                alert('Album created successfully');
+                location.reload();
+            }
+            else {
+                alert('Album already exists');
             }
         });
     })
