@@ -5,12 +5,17 @@ from .helpers import (
     get_photos_by_user, 
     get_author_and_album, 
     get_photos_by_album_and_author,
-    get_albums_by_author
+    get_albums_by_author,
+    get_other_photos
 )
 
 def home(request):
     user = request.user
-    return render(request, 'home.html', {'user': user})
+    albums = get_albums_by_author(user)
+    other_photos = get_other_photos(user)
+    return render(request, 'home.html', {'user': user, 
+                                         'albums': albums, 
+                                         'other_photos': other_photos})
 
 def load_own_photo(request):
     user_cookie = request.COOKIES['cookie']
