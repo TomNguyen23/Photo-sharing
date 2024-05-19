@@ -145,3 +145,15 @@ def remove_album(request):
     except Exception as e:
         logging.error(f"Error in remove_album: {e}")
         return JsonResponse({'message': 'Không thể xóa album, hãy thử lại'})
+    
+def search_other_users(request):
+    # relative search other username
+    try:
+        search_username = request.GET['search_username']
+        other_users = User.objects.filter(username__icontains=search_username).all()
+        other_usernames = [user.username for user in other_users]
+        return JsonResponse({'status': 'success', 'other_usernames': other_usernames})
+    except Exception as e:
+        logging.error(f"Error in search_other_users: {e}")
+        return JsonResponse({'message': 'Không thể tìm kiếm người dùng, hãy thử lại'})
+
