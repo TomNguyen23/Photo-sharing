@@ -52,7 +52,7 @@
                         <i class="fa fa-folder"></i> {{album}}
                     </a>
                 </td>
-                <td class="col"><a href="/remove-album/?album={{ album }}" class="btn btn-danger text-white font-weight-bold">Xóa</a></td>
+                <td class="col"><button data-name="{{album}}" class="btn btn-danger text-white font-weight-bold delete-album">Xóa</button></td>
             </tr>
             {% endfor %}
             
@@ -65,6 +65,7 @@
 
 <script>
     const newAlbumBtn = document.querySelector('.new-album-btn');
+    const deleteAlbum = document.querySelectorAll('.delete-album');
 
     newAlbumBtn.addEventListener('click', function () {
         const newAlbum = document.querySelector('.new-album').value;
@@ -91,6 +92,30 @@
             }
         });
     })
+
+    deleteAlbum.forEach(item => {
+        item.addEventListener('click', function () {
+            const album = this.getAttribute('data-name');
+
+            fetch(`/remove-album/?album=${ album }`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                }
+            }).then(response => {
+                return response.json();
+            }).then(data => {
+                if (data['status'] === 'success') {
+                    location.reload();
+                }
+                else {
+                    alert('Album does not exist');
+                }
+            });
+        })
+    })
+
+
 
 </script>
 
