@@ -5,6 +5,13 @@ from django.http import JsonResponse
 from foto_crud.upload_image import ImgurUpload
 from foto_crud.views.helpers import handle_photo_upload
 from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
+from .helpers import (
+    get_user_from_cookie,
+    get_photos_by_user,
+    get_author_and_album,
+    get_photos_by_album_and_author,
+    get_albums_by_author
+)
 import json
 import logging
 from .helpers import (get_albums_by_author, get_user_from_cookie, handle_photo_upload, get_author_from_request, 

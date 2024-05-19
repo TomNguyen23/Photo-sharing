@@ -73,7 +73,6 @@ def load_album(request):
     else:
         return render(request, 'my-albums.html', {'error': 'User not found'})
 
-
 def load_other_album(request):
     author_username = request.GET.get('author')
     author = User.objects.filter(username=author_username).first()
@@ -155,7 +154,8 @@ def load_image_by_album(request):
     username = request.COOKIES['cookie']
     user = get_user_from_cookie(username)
     album_name = request.GET.get('album')
-    album = Album.objects.filter(album_name=album_name, author=user.username).first()
+    album = Album.objects.filter(
+        album_name=album_name, author=user.username).first()
     photosInAlbum = AlbumPhoto.objects.filter(album=album).all()
     photos = []
     for photoInAlbum in photosInAlbum:
