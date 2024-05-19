@@ -5,7 +5,7 @@ from .views import crud_view, load_view
 urlpatterns = [
     path('', load_view.home, name='home'),
     path('home/', load_view.home, name='home'),
-    path('gallery/', load_view.load_gallery, name='gallery'),
+    path('gallery/', load_view.load_photo_topic, name='load_photo_topic'),
     path('profile/', load_view.load_own_photo, name='profile'),
     path('my-albums/', load_view.load_album, name='my-albums'),
     path('upload-photo/', crud_view.upload_photo, name='upload-photo'),
