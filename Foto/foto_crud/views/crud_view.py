@@ -22,7 +22,7 @@ def upload_photo(request):
         return render(request, 'upload-image.html', {'albums': albums})
     else:
         photo_file = request.FILES['img']
-        local_photo_path =  'E:\DUT Courses\Academic year r3\Semester 2\Lập trình Python\Photo-sharing\Foto\photos/' + photo_file.name
+        local_photo_path =  '../foto/foto_crud/photos/' + photo_file.name
 
         with open(local_photo_path, 'wb+') as destination:
             for chunk in photo_file.chunks():
