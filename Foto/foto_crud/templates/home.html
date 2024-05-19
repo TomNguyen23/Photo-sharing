@@ -92,7 +92,7 @@
                                     <select class="custom-select col-3 rounded" id="album">
                                         <option value="">Select an album</option>
                                         {% for album in albums %}
-                                            <option>{{album}}</option>
+                                            <option>{{album.album_name}}</option>
                                         {% endfor %}
                                     </select>
                                     <button type="button" class="btn btn-primary save-btn">Lưu</button>

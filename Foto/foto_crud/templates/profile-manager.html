@@ -23,11 +23,11 @@
         <div class="col-lg-12 p-0">
             <div class="gallery-filter">
                 {% for photo in photos %}
-                <img src="{{photo}}" alt="" class="gf-item small-height">
+                <img src="{{photo.photo_link}}" alt="" class="gf-item small-height">
 
                 <div class="photo-popup">
                     <span><i class="fa fa-times text-light"></i></span>
-                    <img src="{{photo}}" alt="" class="image-popup">
+                    <img src="{{photo.photo_link}}" alt="" class="image-popup">
                 </div>
                 {% endfor %}
             </div>

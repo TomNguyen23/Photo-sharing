@@ -5,7 +5,9 @@ def get_user_from_cookie(cookie):
     return User.objects.filter(cookies=cookie).first()
 
 def get_photos_by_user(user):
-    photos = AlbumPhoto.objects.filter(user=user).all()
+    selected_album = 'Tất cả ảnh đã upload của ' + user.username
+    album = Album.objects.filter(album_name=selected_album, author=user).first()
+    photos = AlbumPhoto.objects.filter(user=user, album=album).all()
     return [Photo.objects.filter(photo_id=photo.photo_id).first() for photo in photos]
 
 def get_author_and_album(author_username, album_name):
@@ -23,7 +25,10 @@ def get_albums_by_author(author):
 
 # function to get all photos of other users except mine
 def get_other_authors_photos(user):
-    other_authors = User.objects.exclude(username=user.username).all()
+    if user:
+        other_authors = User.objects.exclude(username=user.username).all()
+    else:
+        other_authors = User.objects.all()
     selected_albums = ['Tất cả ảnh đã upload của ' + author.username for author in other_authors]
     selected_albums_ids = [album.album_id for album in Album.objects.filter(album_name__in=selected_albums).all()]
     photos = AlbumPhoto.objects.filter(album_id__in=selected_albums_ids).all()
