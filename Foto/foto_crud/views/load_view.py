@@ -42,6 +42,8 @@ def load_other_photo(request):
 
 def load_album(request):
     user_cookie = request.COOKIES['cookie']
+    if request.GET.get('album') is not None:
+        return load_image_by_album(request)
     user = get_user_from_cookie(user_cookie)
     if user:
         albums = get_albums_by_author(user)
@@ -107,3 +109,16 @@ def load_gallery(request):
         index += 1
     albums = Album.objects.filter(author=current_user).all()
     return render(request, 'gallery.html', {'gallery': gallery, 'albums': albums})
+
+def load_image_by_album(request):
+    username = request.COOKIES['cookie']
+    user = get_user_from_cookie(username)
+    album_name = request.GET.get('album')
+    album = Album.objects.filter(album_name=album_name, author=user.username).first()
+    photosInAlbum = AlbumPhoto.objects.filter(album=album).all()
+    photos = []
+    for photoInAlbum in photosInAlbum:
+        # query photo
+        photo = Photo.objects.filter(photo_id=photoInAlbum.photo_id).first()
+        photos.append(photo)
+    return render(request, 'photos-of-album.html', {'photos': photos, "album_name": album_name, "photos_count": len(photos)})

@@ -3,27 +3,24 @@
 
 {% block photos-of-album %}
 <section class="container-fluid mr-3 mt-3">
-    <div class="upload-title">
-        Album ...
+    <div class="container mt-5 section-title">
+        <h2>Album <b>{{album_name}}</b></h2>
+        <p>{{ photos_count }} ảnh</p>
     </div>
 
-    <div class="gallery-section spad">
+    <div class="container gallery-section spad">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-lg-12 p-0">
                     <div class="gallery-filter">
-
-                        <div class="gf-item set-bg lifestyle" data-setbg="{% static 'img/gallery/gallery-3.jpg' %}">
-                            <div type="button" class="gf-icon mr-5 delete-img" data-id="001"><i class="fa fa-trash"></i></div>
-                            <a href="{% static 'img/gallery/gallery-3.jpg' %}" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
+                        {% for photo in photos %}
+                        <div class="gf-item set-bg small-height" data-setbg="{{ photo.photo_link }}">
+                            <div type="button" class="gf-icon mr-5 delete-img" data-id="{{ photo.photo_id }}"><i class="fa fa-trash"></i>
+                            </div>
+                            <a href="{{ photo.photo_link }}" class="gf-icon image-popup"><span
+                                    class="icon_zoom-in"></span></a>
                         </div>
-
-                        <div class="gf-item set-bg lifestyle" data-setbg="{% static 'img/gallery/gallery-2.jpg' %}">
-                            <div type="button" class="gf-icon mr-5 delete-img" data-id="002"><i class="fa fa-trash"></i></div>
-                            <a href="{% static 'img/gallery/gallery-2.jpg' %}" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -40,7 +37,7 @@
     deleteImgs.forEach(deleteImg => {
         deleteImg.addEventListener('click', () => {
             const imgId = deleteImg.getAttribute('data-id');
-            
+
             if (confirm("Bạn có chắc chắn muốn xóa ảnh " + imgId) == true) {
                 fetch(`/photos-of-albums/delete?photo_id=${imgId}`, {
                     method: 'GET',
