@@ -5,7 +5,7 @@
 <section>
     <div class="user">
         <img src="{% static 'img/user.png' %}" alt="">
-        <h2 class="username">{{user}}</h2>
+        <h2 class="username">{{user.username}}</h2>
 
         <a class="upload-btn" href="{% url 'upload-photo' %}">Tải ảnh lên</a>
     </div>
@@ -24,8 +24,8 @@
             <div class="gallery-filter">
                 {% for photo in photos %}
                 
-                <div class="gf-item small-height set-bg lifestyle" data-setbg="{{photo}}">
-                    <a href="{{photo}}" class="gf-icon image-popup"><span
+                <div class="gf-item small-height set-bg lifestyle" data-setbg="{{photo.photo_link}}">
+                    <a href="{{photo.photo_link}}" class="gf-icon image-popup"><span
                             class="icon_plus"></span>
                     </a>
                 </div>

@@ -88,10 +88,9 @@
                                 <div class="modal-footer input-group border-top-0">
                                     <input type="text" hidden value=" ">
                                     <select class="custom-select col-3 rounded">
-                                        <option selected>Lưu vào thư viện</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
+                                        {% for album in albums %}
+                                        <option>{{album.album_name}}</option>
+                                        {% endfor %}
                                     </select>
                                     <button type="button" class="btn btn-primary">Lưu</button>
                                 </div>

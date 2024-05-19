@@ -21,7 +21,7 @@
         <div class="w-100">
             <div class="form-group">
                 <label>Tác giả</label> <br>
-                <input type="text" class="author" value="{{user}}" disabled>
+                <input type="text" class="author" value="{{user.username}}" disabled>
             </div>
     
             <div class="form-group">
@@ -42,7 +42,7 @@
                 <select class="album">
                     <option value="">Select an album</option>
                     {% for album in albums %}
-                        <option>{{album}}</option>
+                        <option>{{album.album_name}}</option>
                     {% endfor %}
                 </select>
             </div>
