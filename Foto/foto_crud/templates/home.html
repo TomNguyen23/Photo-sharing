@@ -62,9 +62,9 @@
         <div class="row">
             <div class="col-lg-12 p-0">
                 <div class="portfolio-filter">
-                    {for photo in photos}
-                    <div class="pf-item set-bg fashion" data-setbg="{{photo.photo_link}}" style="content-visibility: auto;">
-                        <div type="button" class="pf-icon" data-toggle="modal" data-target="#exampleModalCenter">
+                    {% for other_photo in other_photos %}
+                    <div class="pf-item set-bg fashion" data-setbg="{{other_photo.photo_link}}" style="content-visibility: auto;">
+                        <div type="button" class="pf-icon" data-toggle="modal" data-target="#exampleModalCenter{{other_photo.photo_id}}">
                             <span class="icon_plus"></span>
                         </div>
                         <div class="pf-text">
@@ -73,23 +73,24 @@
                     </div>
 
                     <!-- Modal -->
-                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal fade" id="exampleModalCenter{{other_photo.photo_id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                         <form class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
                                 <div class="modal-header border-bottom-0">
-                                    <h5 class="modal-title" id="exampleModalCenterTitle">{{photo.author}}</h5>
+                                    <h5 class="modal-title" id="exampleModalCenterTitle">{{other_photo.author.username}}</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body d-flex justify-content-center">
-                                    <img src="{{photo.photo_link}}" class="gf-icon" alt="">
+                                    <img src="{{other_photo.photo_link}}" class="gf-icon" alt="" loading="lazy">
                                 </div>
 
                                 {% if 'cookie' in request.COOKIES %}
                                 <div class="modal-footer input-group border-top-0">
-                                    <input type="text" hidden value=" ">
-                                    <select class="custom-select col-3 rounded">
+                                    <input type="text" class="photo-id" hidden value="{{other_photo.photo_id}}">
+                                    <select class="custom-select col-3 rounded" id="album">
+                                        <option value="">Select an album</option>
                                         {% for album in albums %}
                                         <option>{{album.album_name}}</option>
                                         {% endfor %}
@@ -102,13 +103,10 @@
                     </div>
                     <!-- Modal end -->
                     
-                    {endfor}
+                    {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
-    <div class="load-more-btn">
-        <a href="#">Load More</a>
     </div>
 </section>
 {% endblock content %}
@@ -170,16 +168,16 @@
 <script>
     const saveBtns = document.querySelectorAll('.save-btn');
 
-    saveBtns.forEach(saveBtn => {
-        saveBtn.addEventListener('click', function () {
-            const photoId = document.querySelector('.photo-id').value;
-            const album = document.querySelector('.album').value;
+    for (let i = 0; i < saveBtns.length; i++) {
+        saveBtns[i].addEventListener('click', function () {
+            const photoId = document.querySelectorAll('.photo-id')[i].value;
+            const album = document.querySelectorAll('#album')[i].value;
 
             let formData = new FormData();
             formData.append('photo_id', photoId)
             formData.append('album', album)
 
-            let url = "/upload-photo/";
+            let url = "/save-photo/";
 
             fetch(url, {
                 method: 'POST',
@@ -196,7 +194,7 @@
                 }
             });
         })
-    })
+    }
 </script>
 
 {% endblock %}

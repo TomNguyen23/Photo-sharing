@@ -28,7 +28,7 @@ def get_other_photos(user):
 
 def handle_photo_upload(photo_file):
     try:
-        local_photo_path = 'E:\\DUT Courses\\Academic year r3\\Semester 2\\Lập trình Python\\Photo-sharing\\Foto\\photos\\' + photo_file.name
+        local_photo_path = '../Foto/Foto_crud/photos/' + photo_file.name
         with open(local_photo_path, 'wb+') as destination:
             for chunk in photo_file.chunks():
                 destination.write(chunk)

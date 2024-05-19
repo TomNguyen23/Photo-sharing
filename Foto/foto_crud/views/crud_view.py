@@ -16,48 +16,46 @@ from .helpers import (handle_photo_upload, get_author_from_request,
 
 
 def upload_photo(request):
-    try:
-        if request.method == 'GET': 
-            return render(request, 'upload-image.html')
+    if request.method == 'GET': 
+        user_cookie = request.COOKIES['cookie']
+        user = get_user_from_cookie(user_cookie)
+        albums = get_albums_by_author(user)
+        return render(request, 'upload-image.html', {'albums': albums})
+    else:
+        try:  # Add try block here
+            photo_file = request.FILES['img']
+            local_photo_path = handle_photo_upload(photo_file)
 
-        photo_file = request.FILES['img']
-        local_photo_path = handle_photo_upload(photo_file)
-        local_photo_path = handle_photo_upload(photo_file)
+            imgur = ImgurUpload()
+            try:
+                imgur_photo_link = imgur.upload_image_from_image_path(local_photo_path)
+            except Exception as e:
+                logging.error(f"Imgur upload failed: {e}")
+                return JsonResponse({'message': 'Upload ảnh thất bại'})
+            finally:
+                os.remove(local_photo_path)
 
-        imgur = ImgurUpload()
-        try:
-            imgur_photo_link = imgur.upload_image_from_image_path(local_photo_path)
+            author = get_author_from_request(request)
+            new_photo = Photo(photo_link=imgur_photo_link, author=author)
+            new_photo.save()
+
+            topics_uploaded = request.POST['theme'].split(',')
+            topics = [get_or_create_topic(topic_name) for topic_name in topics_uploaded]
+
+            for topic in topics:
+                PhotoTopic(photo=new_photo, topic=topic).save()
+
+            album_name = request.POST.get('album', f'Tất cả ảnh đã upload của {author.username}')
+            if (album_name == ''):
+                album_name = f'Tất cả ảnh đã upload của {author.username}'
+            album = get_or_create_album(album_name, author)
+
+            handle_album_photo_save(album, new_photo, author)
+
+            return JsonResponse({'status': 'success'})
         except Exception as e:
-            logging.error(f"Imgur upload failed: {e}")
-            return JsonResponse({'message': 'Upload ảnh thất bại'})
-        finally:
-            os.remove(local_photo_path)
-
-        author = get_author_from_request(request)
-        author = get_author_from_request(request)
-        new_photo = Photo(photo_link=imgur_photo_link, author=author)
-        new_photo.save()
-
-        topics_uploaded = request.POST['theme'].split(',')
-        topics = [get_or_create_topic(topic_name) for topic_name in topics_uploaded]
-
-        for topic in topics:
-            PhotoTopic(photo=new_photo, topic=topic).save()
-            PhotoTopic(photo=new_photo, topic=topic).save()
-
-        album_name = request.POST.get('album', f'Tất cả ảnh đã upload của {author.username}')
-        if (album_name == ''):
-            album_name = f'Tất cả ảnh đã upload của {author.username}'
-        album = get_or_create_album(album_name, author)
-        album = get_or_create_album(album_name, author)
-
-        handle_album_photo_save(album, new_photo, author)
-        handle_album_photo_save(album, new_photo, author)
-
-        return JsonResponse({'status': 'success'})
-    except Exception as e:
-        logging.error(f"Error in upload_photo: {e}")
-        return JsonResponse({'message': 'Không thể upload ảnh, hãy thử lại'})
+            logging.error(f"Error in upload_photo: {e}")
+            return JsonResponse({'message': 'Không thể upload ảnh, hãy thử lại'})
 
 def save_photo(request):
     try:
