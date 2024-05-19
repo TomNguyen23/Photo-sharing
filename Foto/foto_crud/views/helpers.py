@@ -6,7 +6,7 @@ def get_user_from_cookie(cookie):
 
 def get_photos_by_user(user):
     photos = AlbumPhoto.objects.filter(user=user).all()
-    return [Photo.objects.filter(photo_id=photo.photo_id).first().photo_link for photo in photos]
+    return [Photo.objects.filter(photo_id=photo.photo_id).first() for photo in photos]
 
 def get_author_and_album(author_username, album_name):
     author = User.objects.filter(username=author_username).first()
@@ -15,7 +15,7 @@ def get_author_and_album(author_username, album_name):
 
 def get_photos_by_album_and_author(album, author):
     photos = AlbumPhoto.objects.filter(album=album, user=author).all()
-    return [Photo.objects.filter(photo_id=photo.photo).first().photo_link for photo in photos]
+    return [Photo.objects.filter(photo_id=photo.photo).first() for photo in photos]
 
 def get_albums_by_author(author):
     albums = Album.objects.filter(author=author).all()
