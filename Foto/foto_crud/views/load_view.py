@@ -14,10 +14,9 @@ def home(request):
     user = request.user
     albums = get_albums_by_author(user)
     other_photos = get_other_photos(user)
-    return render(request, 'home.html', {'user': user,
-                                         'albums': albums,
+    return render(request, 'home.html', {'user': user, 
+                                         'albums': albums, 
                                          'other_photos': other_photos})
-
 
 def load_own_photo(request):
     user_cookie = request.COOKIES['cookie']

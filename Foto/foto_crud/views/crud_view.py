@@ -4,28 +4,29 @@ from django.http import JsonResponse
 
 from foto_crud.upload_image import ImgurUpload
 from foto_crud.views.helpers import handle_photo_upload
+from foto_crud.views.helpers import handle_photo_upload
 from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
 import json
 import logging
-from .helpers import (handle_photo_upload, get_author_from_request,
-                      get_or_create_topic, get_or_create_album,
-                      handle_album_photo_save, handle_photo_removal)
+from .helpers import (handle_photo_upload, get_author_from_request, 
+                     get_or_create_topic, get_or_create_album, 
+                     handle_album_photo_save, handle_photo_removal)
 
 # Create your views here.
 
 
 def upload_photo(request):
     try:
-        if request.method == 'GET':
+        if request.method == 'GET': 
             return render(request, 'upload-image.html')
 
         photo_file = request.FILES['img']
         local_photo_path = handle_photo_upload(photo_file)
+        local_photo_path = handle_photo_upload(photo_file)
 
         imgur = ImgurUpload()
         try:
-            imgur_photo_link = imgur.upload_image_from_image_path(
-                local_photo_path)
+            imgur_photo_link = imgur.upload_image_from_image_path(local_photo_path)
         except Exception as e:
             logging.error(f"Imgur upload failed: {e}")
             return JsonResponse({'message': 'Upload ảnh thất bại'})
@@ -33,22 +34,24 @@ def upload_photo(request):
             os.remove(local_photo_path)
 
         author = get_author_from_request(request)
+        author = get_author_from_request(request)
         new_photo = Photo(photo_link=imgur_photo_link, author=author)
         new_photo.save()
 
         topics_uploaded = request.POST['theme'].split(',')
-        topics = [get_or_create_topic(topic_name)
-                  for topic_name in topics_uploaded]
+        topics = [get_or_create_topic(topic_name) for topic_name in topics_uploaded]
 
         for topic in topics:
             PhotoTopic(photo=new_photo, topic=topic).save()
+            PhotoTopic(photo=new_photo, topic=topic).save()
 
-        album_name = request.POST.get(
-            'album', f'Tất cả ảnh đã upload của {author.username}')
+        album_name = request.POST.get('album', f'Tất cả ảnh đã upload của {author.username}')
         if (album_name == ''):
             album_name = f'Tất cả ảnh đã upload của {author.username}'
         album = get_or_create_album(album_name, author)
+        album = get_or_create_album(album_name, author)
 
+        handle_album_photo_save(album, new_photo, author)
         handle_album_photo_save(album, new_photo, author)
 
         return JsonResponse({'status': 'success'})
@@ -56,27 +59,24 @@ def upload_photo(request):
         logging.error(f"Error in upload_photo: {e}")
         return JsonResponse({'message': 'Không thể upload ảnh, hãy thử lại'})
 
-
 def save_photo(request):
     try:
         photo_id = request.POST['photo_id']
         user = get_author_from_request(request)
 
         if AlbumPhoto.objects.filter(photo_id=photo_id, user=user).exists():
-            return JsonResponse({'status': 'failed', 'message': 'Ảnh đã được lưu'})
+            return render(request, 'foto_crud/index.html', {'message': 'Ảnh đã được lưu'})
 
         photo = Photo.objects.filter(photo_id=photo_id).first()
         album_name = request.POST['album']
-        album = Album.objects.filter(
-            album_name=album_name, author=user).first()
+        album = Album.objects.filter(album_name=album_name, author=user).first()
 
         AlbumPhoto(user=user, photo=photo, album=album).save()
 
-        return JsonResponse({'status': 'success', 'message': 'Lưu ảnh thành công :D'})
+        return JsonResponse({'status': 'success'})
     except Exception as e:
         logging.error(f"Error in save_photo: {e}")
-        return JsonResponse({'status': 'failed', 'message': 'Không thể lưu ảnh, hãy thử lại'})
-
+        return JsonResponse({'message': 'Không thể lưu ảnh, hãy thử lại'})
 
 def create_album(request):
     try:
@@ -87,7 +87,13 @@ def create_album(request):
             return JsonResponse({'status': 'fail', 'message': 'Album đã tồn tại'})
 
         Album(album_name=album_name, author=author).save()
+        if Album.objects.filter(album_name=album_name, author=author).exists():
+            return JsonResponse({'status': 'fail', 'message': 'Album đã tồn tại'})
 
+        Album(album_name=album_name, author=author).save()
+
+        albums = Album.objects.filter(author=author)
+        album_names = [album.album_name for album in albums]
         albums = Album.objects.filter(author=author)
         album_names = [album.album_name for album in albums]
 
@@ -95,7 +101,6 @@ def create_album(request):
     except Exception as e:
         logging.error(f"Error in create_album: {e}")
         return JsonResponse({'message': 'Không thể tạo mới album, hãy thử lại'})
-
 
 def upvote_photo(request):
     try:
@@ -107,8 +112,6 @@ def upvote_photo(request):
     except Exception as e:
         logging.error(f"Error in upvote_photo: {e}")
         return JsonResponse({'message': 'Không thể upvote ảnh, hãy thử lại'})
-
-
 def remove_photo(request):
     try:
         if request.method == 'GET':
@@ -117,14 +120,15 @@ def remove_photo(request):
         photo_id = request.POST['photo_id']
         album_name = request.POST['album']
         author = get_author_from_request(request)
+        author = get_author_from_request(request)
 
+        handle_photo_removal(photo_id, album_name, author)
         handle_photo_removal(photo_id, album_name, author)
 
         return render(request, 'foto_crud/remove_photo.html', {'message': 'Xóa ảnh thành công'})
     except Exception as e:
         logging.error(f"Error in remove_photo: {e}")
         return JsonResponse({'message': 'Không thể xóa ảnh, hãy thử lại'})
-
 
 def remove_multiple_photos(request):
     try:
@@ -134,8 +138,10 @@ def remove_multiple_photos(request):
         photo_ids = request.POST.getlist('photo_ids')
         album_name = request.POST['album']
         author = get_author_from_request(request)
+        author = get_author_from_request(request)
 
         for photo_id in photo_ids:
+            handle_photo_removal(photo_id, album_name, author)
             handle_photo_removal(photo_id, album_name, author)
 
         return render(request, 'foto_crud/remove_photo.html', {'message': 'Xóa ảnh thành công'})
@@ -143,14 +149,12 @@ def remove_multiple_photos(request):
         logging.error(f"Error in remove_multiple_photos: {e}")
         return JsonResponse({'message': 'Không thể xóa những ảnh đã chọn, hãy thử lại'})
 
-
 def remove_album(request):
     try:
         album_name = request.GET['album']
         author = get_author_from_request(request)
 
-        album_to_remove = Album.objects.filter(
-            album_name=album_name, author=author).first()
+        album_to_remove = Album.objects.filter(album_name=album_name, author=author).first()
         if album_to_remove:
             AlbumPhoto.objects.filter(album=album_to_remove).delete()
             album_to_remove.delete()
