@@ -6,7 +6,7 @@ from .helpers import (
     get_author_and_album, 
     get_photos_by_album_and_author,
     get_albums_by_author,
-    get_other_photos
+    get_other_authors_photos
 )
 
 def home(request):
@@ -16,7 +16,8 @@ def home(request):
     except:
         user = None
     albums = get_albums_by_author(user)
-    other_photos = get_other_photos(user)
+    albums = [album for album in albums if album.album_name != 'Tất cả ảnh đã upload của ' + user.username]
+    other_photos = get_other_authors_photos(user)
     return render(request, 'home.html', {'user': user, 
                                          'albums': albums, 
                                          'other_photos': other_photos})
@@ -53,8 +54,8 @@ def load_other_album(request):
     author_username = request.GET.get('author')
     author = User.objects.filter(username=author_username).first()
     if author:
-        albums = get_albums_by_author(author)
-        return render(request, 'foto_crud/load_other_album.html', {'albums': albums})
+        album = Album.objects.filter(album_name='Tất cả ảnh đã upload của ' + author_username, author=author).first()
+        return render(request, 'foto_crud/load_other_album.html', {'albums': album})
     else:
         return render(request, 'foto_crud/load_other_album.html', {'error': 'Author not found'})
     
@@ -62,7 +63,7 @@ def load_photo_topic(request):
     user_cookie = request.COOKIES['cookie']
     user = get_user_from_cookie(user_cookie)
 
-    photos_excluded = get_other_photos(user)
+    photos_excluded = get_other_authors_photos(user)
 
     for photo in photos_excluded:
         print (photo.photo_link)

@@ -19,11 +19,14 @@ def get_photos_by_album_and_author(album, author):
 
 def get_albums_by_author(author):
     albums = Album.objects.filter(author=author).all()
-    return [album.album_name for album in albums]
+    return albums
 
 # function to get all photos of other users except mine
-def get_other_photos(user):
-    photos = AlbumPhoto.objects.exclude(user=user).all()
+def get_other_authors_photos(user):
+    other_authors = User.objects.exclude(username=user.username).all()
+    selected_albums = ['Tất cả ảnh đã upload của ' + author.username for author in other_authors]
+    selected_albums_ids = [album.album_id for album in Album.objects.filter(album_name__in=selected_albums).all()]
+    photos = AlbumPhoto.objects.filter(album_id__in=selected_albums_ids).all()
     return Photo.objects.filter(photo_id__in=[photo.photo_id for photo in photos]).all()
 
 def handle_photo_upload(photo_file):
