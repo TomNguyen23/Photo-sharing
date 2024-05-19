@@ -69,7 +69,6 @@
                         </div>
                         <div class="pf-text">
                             <h4>COLORS SPEAK</h4>
-                            <span>Fashion</span>
                         </div>
                     </div>
 
@@ -86,6 +85,8 @@
                                 <div class="modal-body d-flex justify-content-center">
                                     <img src="{{photo.photo_link}}" class="gf-icon" alt="">
                                 </div>
+
+                                {% if 'cookie' in request.COOKIES %}
                                 <div class="modal-footer input-group border-top-0">
                                     <input type="text" hidden value=" ">
                                     <select class="custom-select col-3 rounded">
@@ -95,6 +96,7 @@
                                     </select>
                                     <button type="button" class="btn btn-primary save-btn">Lưu</button>
                                 </div>
+                                {% endif %}
                             </div>
                         </form>
                     </div>
