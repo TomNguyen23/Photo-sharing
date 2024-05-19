@@ -15,9 +15,10 @@ def home(request):
         user_cookie = request.COOKIES['cookie']
         user = get_user_from_cookie(user_cookie)
     except:
-        user = None
+        user = ''
     albums = get_albums_by_author(user)
-    albums = [album for album in albums if album.album_name != 'Tất cả ảnh đã upload của ' + user.username]
+    if user:
+        albums = [album for album in albums if album.album_name != 'Tất cả ảnh đã upload của ' + user.username]
     other_photos = get_other_authors_photos(user)
     return render(request, 'home.html', {'user': user, 
                                          'albums': albums, 

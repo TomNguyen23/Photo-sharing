@@ -49,8 +49,11 @@ def upload_photo(request):
             if (album_name == ''):
                 album_name = f'Tất cả ảnh đã upload của {author.username}'
             album = get_or_create_album(album_name, author)
-
             handle_album_photo_save(album, new_photo, author)
+            if not album_name == f'Tất cả ảnh đã upload của {author.username}':
+                album_name = f'Tất cả ảnh đã upload của {author.username}'
+                album = get_or_create_album(album_name, author)
+                handle_album_photo_save(album, new_photo, author)
 
             return JsonResponse({'status': 'success'})
         except Exception as e:
