@@ -10,7 +10,7 @@
         <a class="upload-btn" href="{% url 'upload-photo' %}">Tải ảnh lên</a>
     </div>
 
-    <div class="album container d-flex mr-3">
+    <div class="album container d-flex">
         <a id="activate" class="my-albums font-weight-bold" href="{% url 'profile' %}">Ảnh đã tải lên</a>
         <a class="my-albums font-weight-bold" href="{% url 'my-albums' %}">Album của tôi</a>
     </div>
@@ -18,7 +18,7 @@
 {% endblock profile-manager %}
 
 {% block my-photos %}
-<section class="container mr-3 mt-3">
+<section class="container mt-3">
     <div class="row">
         <div class="col-lg-12 p-0">
             <div class="gallery-filter">
