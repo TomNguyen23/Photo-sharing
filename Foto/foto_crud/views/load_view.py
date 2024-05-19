@@ -78,10 +78,11 @@ def load_user_search(request):
 def load_guest_profile(request):
     current_user = get_user_from_cookie(request.COOKIES['cookie'])
     albums = Album.objects.filter(author=current_user).all()
-    print(albums)
     user = request.GET.get('username')
+    # query userId
+    user = User.objects.filter(username=user).first()
     if user:
-        photos = get_photos_by_user(user)
+        photos = Photo.objects.filter(author_id=user).all()
     else:
         return render(request, 'guest-visit.html', {'error': 'User not found'})
     return render(request, 'guest-visit.html', {

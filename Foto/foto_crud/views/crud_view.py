@@ -63,7 +63,7 @@ def save_photo(request):
         user = get_author_from_request(request)
 
         if AlbumPhoto.objects.filter(photo_id=photo_id, user=user).exists():
-            return render(request, 'foto_crud/index.html', {'message': 'Ảnh đã được lưu'})
+            return JsonResponse({'status': 'failed', 'message': 'Ảnh đã được lưu'})
 
         photo = Photo.objects.filter(photo_id=photo_id).first()
         album_name = request.POST['album']
@@ -72,10 +72,10 @@ def save_photo(request):
 
         AlbumPhoto(user=user, photo=photo, album=album).save()
 
-        return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'success', 'message': 'Lưu ảnh thành công :D'})
     except Exception as e:
         logging.error(f"Error in save_photo: {e}")
-        return JsonResponse({'message': 'Không thể lưu ảnh, hãy thử lại'})
+        return JsonResponse({'status': 'failed', 'message': 'Không thể lưu ảnh, hãy thử lại'})
 
 
 def create_album(request):
