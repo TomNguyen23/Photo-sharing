@@ -48,8 +48,11 @@
             </div>
 
 
-            <div class="form-group">
+            <div class="form-group d-flex">
                 <button class="upload-btn">Tải lên</button>
+                <div id="preloader" class="spinner-border text-primary ml-3" role="status" style="display: none;">
+                    <span class="sr-only">Loading...</span>
+                </div>
             </div>
         </div>
 
@@ -98,6 +101,10 @@
         const theme = $('.select2').val();
         const album = document.querySelector('.album').value;
 
+        document.getElementById('preloader').style.display = 'block';
+        this.disabled = true;
+        this.style.backgroundColor = 'gray';
+
         let formData = new FormData();
         formData.append('img', img);
         formData.append('author', author);
@@ -115,6 +122,9 @@
         }).then(response => {
             return response.json();
         }).then(status => {
+            document.getElementById('preloader').style.display = 'none';
+            this.disabled = false;
+            this.style.backgroundColor = '#007bff';
             console.log(status);
             if(status['status'] === 'success') {
                 window.location.reload();
