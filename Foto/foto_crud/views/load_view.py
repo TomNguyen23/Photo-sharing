@@ -91,3 +91,19 @@ def load_guest_profile(request):
         'photoCount': 15,
         'albums': albums
     })
+
+def load_gallery(request):
+    TOPICS1 = ['natural', 'fashion', 'animals']
+    TOPICS2 = ['lifestyle', 'city', 'country']
+    current_user = get_user_from_cookie(request.COOKIES['cookie'])
+    photos = get_other_photos(current_user)[0:5]
+    gallery = []
+    index = 0
+    for photo in photos:
+        gallery.append({
+            "photo": photo,
+            "topics": str(TOPICS1[index % 3] + ' ' + TOPICS2[index % 3])
+        })
+        index += 1
+    albums = Album.objects.filter(author=current_user).all()
+    return render(request, 'gallery.html', {'gallery': gallery, 'albums': albums})

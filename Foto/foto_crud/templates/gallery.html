@@ -18,7 +18,7 @@
         </div>
     </div>
     <!-- Breadcrumb End -->
-    
+
     <!-- Gallery Section Begin -->
     <div class="gallery-section spad">
         <div class="container">
@@ -43,108 +43,45 @@
             <div class="row">
                 <div class="col-lg-12 p-0">
                     <div class="gallery-filter">
-                        <div class="gf-item set-bg fashion" data-setbg="img/gallery/gallery-1.jpg">
-                            <div type="button" class="gf-icon" data-toggle="modal" data-target="#exampleModalCenter">
+                        {% for gallery_item in gallery %}
+                        <div class="gf-item set-bg small-height {{gallery_item.topics}}"
+                            data-setbg="{{ gallery_item.photo.photo_link }}">
+                            <div type="button" class="gf-icon" data-toggle="modal"
+                                data-target="#exampleModalCenter{{ gallery_item.photo.photo_id}}">
                                 <span class="icon_plus"></span>
                             </div>
                         </div>
-                        
+
                         <!-- Modal -->
-                        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal fade" id="exampleModalCenter{{gallery_item.photo.photo_id}}" tabindex="-1"
+                            role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                             <form class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header border-bottom-0">
-                                        <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+                                        <h5 class="modal-title" id="exampleModalCenterTitle">Lưu ảnh này</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
+                                            <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
                                     <div class="modal-body d-flex justify-content-center">
-                                        <img src="img/gallery/gallery-1.jpg" class="gf-icon" alt="">
+                                        <img src="{{ gallery_item.photo.photo_link }}" class="gf-icon modal-img-holder"
+                                            photo-id="{{ gallery_item.photo.photo_id }}" alt="">
                                     </div>
                                     <div class="modal-footer input-group border-top-0">
                                         <input type="text" hidden value=" ">
-                                        <select class="custom-select col-3 rounded">
+                                        <select class="custom-select col-3 rounded album-name">
                                             <option selected>Lưu vào thư viện</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
+                                            {% for album in albums %}
+                                            <option value="{{album.album_name}}">{{album.album_name}}</option>
+                                            {% endfor %}
                                         </select>
-                                        <button type="button" class="btn btn-primary">Lưu</button>
+                                        <button type="button" class="btn btn-primary album-save">Lưu</button>
                                     </div>
                                 </div>
                             </form>
                         </div>
                         <!-- Modal end -->
-                        
-                        <div class="gf-item small-height set-bg lifestyle" data-setbg="img/gallery/gallery-2.jpg">
-                            <a href="img/gallery/gallery-2.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-small-height set-bg natural" data-setbg="img/gallery/gallery-3.jpg">
-                            <a href="img/gallery/gallery-3.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item small-height set-bg wedding" data-setbg="img/gallery/gallery-4.jpg">
-                            <a href="img/gallery/gallery-4.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg lifestyle" data-setbg="img/gallery/gallery-5.jpg">
-                            <a href="img/gallery/gallery-5.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg natural" data-setbg="img/gallery/gallery-6.jpg">
-                            <a href="img/gallery/gallery-6.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg videos" data-setbg="img/gallery/gallery-7.jpg">
-                            <a href="img/gallery/gallery-7.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg fashion" data-setbg="img/gallery/gallery-8.jpg">
-                            <a href="img/gallery/gallery-8.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item medium-large-height set-bg videos" data-setbg="img/gallery/gallery-9.jpg">
-                            <a href="img/gallery/gallery-9.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg fashion" data-setbg="img/gallery/gallery-6.jpg">
-                            <a href="img/gallery/gallery-6.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg wedding" data-setbg="img/gallery/gallery-10.jpg">
-                            <a href="img/gallery/gallery-10.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg wedding" data-setbg="img/gallery/gallery-11.jpg">
-                            <a href="img/gallery/gallery-11.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item small-height set-bg wedding" data-setbg="img/gallery/gallery-12.jpg">
-                            <a href="img/gallery/gallery-12.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg wedding" data-setbg="img/gallery/gallery-13.jpg">
-                            <a href="img/gallery/gallery-13.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg wedding" data-setbg="img/gallery/gallery-14.jpg">
-                            <a href="img/gallery/gallery-14.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item set-bg wedding" data-setbg="img/gallery/gallery-15.jpg">
-                            <a href="img/gallery/gallery-15.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item large-height set-bg wedding" data-setbg="img/gallery/gallery-16.jpg">
-                            <a href="img/gallery/gallery-16.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
-                        <div class="gf-item medium-small-height set-bg wedding" data-setbg="img/gallery/gallery-17.jpg">
-                            <a href="img/gallery/gallery-17.jpg" class="gf-icon image-popup"><span
-                                    class="icon_plus"></span></a>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -156,3 +93,45 @@
     <!-- Gallery Section End -->
 </section>
 {% endblock gallery %}
+
+{% block page_script %}
+<script>
+    $(document).ready(function () {
+        $('.album-save').on('click', function () {
+            // get the opening modal
+            let modal = $(this).closest('.modal');
+            // get the selected album name
+            let album_name = modal.find('.album-name').val();
+            // get the photo id
+            let photo_id = modal.find('.modal-img-holder').attr('photo-id');
+            console.log(album_name, photo_id);
+            $.ajax({
+                url: '/save-photo/',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                data: {
+                    'album': album_name,
+                    'photo_id': photo_id
+                },
+                success: function (data) {
+                    if (data['message'] == 'success')
+                        alert(data['message']);
+                    else
+                        alert(data['message']);
+                }
+            });
+        });
+    });
+</script>
+
+
+{% if message %}
+<script>
+    alert('{{message}}');
+    window.location.reload();
+</script>
+{% endif %}
+
+{% endblock %}

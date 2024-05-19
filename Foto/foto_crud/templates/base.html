@@ -49,9 +49,9 @@
                     <nav class="nav-menu mobile-menu float-right">
                         <ul>
                             <li class="mr-xl-5">
-                                <form method="GET" onsubmit="return updateAction();">
+                                <form method="GET" action="/search-profile/">
                                     <div class="input-group mb-3" style="width: 28.125rem">
-                                        <input id="author-search" type="text" class="form-control bg-light"
+                                        <input id="author-search" name="search" type="text" class="form-control bg-light"
                                             placeholder="Nhà sáng tạo bạn muốn tìm kiếm..."
                                             aria-label="Recipient's username" aria-describedby="button-addon2">
                                         <div class="input-group-append">
@@ -62,7 +62,7 @@
                                 </form>
                             </li>
                             <li><a href="{% url 'home' %}">Trang chủ</a></li>
-                            <li><a href="">Khám phá</a></li>
+                            <li><a href="/gallery">Khám phá</a></li>
 
                             {% if 'cookie' in request.COOKIES %}
                             <li class="dropdown" style="width: 50px; height: 50px;">
