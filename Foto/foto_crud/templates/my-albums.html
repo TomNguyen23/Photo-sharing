@@ -52,7 +52,7 @@
                         <i class="fa fa-folder"></i> {{album}}
                     </a>
                 </td>
-                <td class="col"><a href="" class="btn btn-danger text-white font-weight-bold">Xóa</a></td>
+                <td class="col"><a href="/remove-album/?album={{ album }}" class="btn btn-danger text-white font-weight-bold">Xóa</a></td>
             </tr>
             {% endfor %}
             
@@ -93,5 +93,12 @@
     })
 
 </script>
+
+{% if message %}
+<script>
+    alert('{{message}}');
+    window.location.reload();
+</script>
+{% endif %}
 
 {% endblock %}
