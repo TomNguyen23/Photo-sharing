@@ -30,9 +30,27 @@
                     </a>
                 </div>
                 {% endfor %}
-
             </div>
         </div>
     </div>
 </section>
 {% endblock my-photos %}
+
+{% block page_script %}
+
+<script>
+
+    document.querySelectorAll(".gf-item").forEach(item => {
+        item.addEventListener("click", function() {
+            document.querySelector(".photo-popup").style.display = "block";
+            document.querySelector(".image-popup").src = item.src;
+        });
+    });
+
+    document.querySelector(".fa-times").addEventListener("click", function() {
+        document.querySelector(".photo-popup").style.display = "none";
+    });
+
+</script>
+
+{% endblock %}
