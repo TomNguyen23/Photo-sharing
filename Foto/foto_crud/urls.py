@@ -11,4 +11,5 @@ urlpatterns = [
     path('upload-photo/', crud_view.upload_photo, name='upload-photo'),
     path('create-album/', crud_view.create_album, name='create-album'),
     path('remove-album/', crud_view.remove_album, name='remove-album'),
+    path('photos-of-album/', load_view.photoOfAlbum, name='photos-of-album'),
 ]

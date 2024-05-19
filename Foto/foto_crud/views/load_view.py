@@ -48,3 +48,6 @@ def load_other_album(request):
         return render(request, 'foto_crud/load_other_album.html', {'albums': albums})
     else:
         return render(request, 'foto_crud/load_other_album.html', {'error': 'Author not found'})
+
+def photoOfAlbum(request):
+    return render(request, 'photos-of-album.html')

@@ -4,12 +4,22 @@ from django.http import JsonResponse
 
 from foto_crud.upload_image import ImgurUpload
 from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
+from .helpers import (
+    get_user_from_cookie, 
+    get_photos_by_user, 
+    get_author_and_album, 
+    get_photos_by_album_and_author,
+    get_albums_by_author
+)
 import json
 
 # Create your views here.
 def upload_photo(request):
     if request.method == 'GET': 
-        return render(request, 'upload-image.html')
+        user_cookie = request.COOKIES['cookie']
+        user = get_user_from_cookie(user_cookie)
+        albums = get_albums_by_author(user)
+        return render(request, 'upload-image.html', {'albums': albums})
     else:
         photo_file = request.FILES['img']
         local_photo_path =  'E:\DUT Courses\Academic year r3\Semester 2\Lập trình Python\Photo-sharing\Foto\photos/' + photo_file.name
