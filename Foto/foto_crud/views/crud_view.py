@@ -1,160 +1,141 @@
 import os
 from django.shortcuts import render
+from django.http import JsonResponse
 
 from foto_crud.upload_image import ImgurUpload
-
 from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
 import json
-from django.http import JsonResponse
 
 # Create your views here.
 def upload_photo(request):
     if request.method == 'GET': 
         return render(request, 'upload-image.html')
     else:
-        photo = request.FILES['img']
-        photo_saved_link = 'E:\DUT Courses\Academic year r3\Semester 2\Lập trình Python\Photo-sharing\Foto\photos/' + photo.name
-        with open(photo_saved_link, 'wb+') as destination:
-            for chunk in photo.chunks():
-                destination.write(chunk)
+        photo_file = request.FILES['img']
+        local_photo_path =  'E:\DUT Courses\Academic year r3\Semester 2\Lập trình Python\Photo-sharing\Foto\photos/' + photo_file.name
 
-        photo = photo_saved_link
+        with open(local_photo_path, 'wb+') as destination:
+            for chunk in photo_file.chunks():
+                destination.write(chunk)
 
         imgur = ImgurUpload()
         try:
-            photo_link = imgur.upload_image_from_image_path(photo)
+            imgur_photo_link = imgur.upload_image_from_image_path(local_photo_path)
         except:
             return JsonResponse({'message': 'Upload ảnh thất bại'})
-        print(photo_link)
-        # delete photo after upload
-        os.remove(photo_saved_link)
+        
+        os.remove(local_photo_path)
 
-        author = request.COOKIES['cookie']
-        author = User.objects.filter(cookies=author).first()
+        author_cookie = request.COOKIES['cookie']
+        author = User.objects.filter(cookies=author_cookie).first()
 
-        photo = Photo(photo_link=photo_link, author=author)
-        photo.save()
+        new_photo = Photo(photo_link=imgur_photo_link, author=author)
+        new_photo.save()
 
         topics_uploaded = request.POST['theme'].split(',')
-        print(topics_uploaded)
         topics = []
-        for t in topics_uploaded:
-            if Topic.objects.filter(topic_name=t).first() is None:
-                topic = Topic(topic_name=t)
-                topic.save()
-                topics.append(topic)
-            else:
-                topics.append(Topic.objects.filter(topic_name=t).first())
 
-        for t in topics:
-            photo_topic = PhotoTopic(photo_id=photo.photo_id, topic_id=t.topic_id)
+        for topic_name in topics_uploaded:
+            topic = Topic.objects.filter(topic_name=topic_name).first()
+            if topic is None:
+                topic = Topic(topic_name=topic_name)
+                topic.save()
+            topics.append(topic)
+
+        for topic in topics:
+            photo_topic = PhotoTopic(photo=new_photo, topic=topic)
             photo_topic.save()
 
-        album = request.POST['album']
-        if album:
-            album = Album.objects.get(album_name=album, author=author).first()
-            album_photo = AlbumPhoto(album=album, photo=photo, user=author)
-            album_photo.save()
+        album_name = request.POST['album']
+        if album_name:
+            album = Album.objects.filter(album_name=album_name, author=author).first()
         else:
-            album_name = 'Tất cả ảnh của ' + author.username
-            # create album if not exist
-            album = Album.objects.get(album_name=album_name, author=author).first()
+            album_name = f'Tất cả ảnh đã upload của {author.username}'
+            album = Album.objects.filter(album_name=album_name, author=author).first()
             if album is None:
                 album = Album(album_name=album_name, author=author)
                 album.save()
-            album_photo = AlbumPhoto(album=album, photo=photo, user=author)
-            album_photo.save()
+
+        album_photo = AlbumPhoto(album=album, photo=new_photo, user=author)
+        album_photo.save()
 
         return JsonResponse({'status': 'success'})
-        
-    
+
 def save_photo(request):
-    photo_id = request.get['photo_id']
-    user = request.COOKIES['cookie']
-    user = User.objects.filter(cookies=user).first()
-    saved_photo = AlbumPhoto.objects.filter(photo=photo_id, user=user).first()
-    if saved_photo is not None:
+    photo_id = request.GET['photo_id']
+    user_cookie = request.COOKIES['cookie']
+    user = User.objects.filter(cookies=user_cookie).first()
+
+    if AlbumPhoto.objects.filter(photo_id=photo_id, user=user).exists():
         return render(request, 'foto_crud/index.html', {'message': 'Ảnh đã được lưu'})
-    user = request.COOKIES['cookie']
-    user = User.objects.filter(cookies=user).first()
+
     photo = Photo.objects.filter(photo_id=photo_id).first()
-    album = request.get['album']
-    album = Album.objects.filter(album_name=album, author=user).first()
+    album_name = request.GET['album']
+    album = Album.objects.filter(album_name=album_name, author=user).first()
+
     saved_photo = AlbumPhoto(user=user, photo=photo, album=album)
     saved_photo.save()
+
     return render(request, 'foto_crud/index.html')
 
 def create_album(request):
     album_name = request.POST['new-album']
-    author = request.COOKIES['cookie']
-    author = User.objects.filter(cookies=author).first()
-    album = Album.objects.filter(album_name=album_name, author=author).first()
-    if album is None:
+    author_cookie = request.COOKIES['cookie']
+    author = User.objects.filter(cookies=author_cookie).first()
+
+    if not Album.objects.filter(album_name=album_name, author=author).exists():
         album = Album(album_name=album_name, author=author)
         album.save()
-        albums = Album.objects.filter(author=author).all()
-        album_names = []
-        for album in albums:
-            album_names.append(album.album_name)
-        return JsonResponse({'status': 'success', 'albums': album_names})
-    else:
-        albums = Album.objects.filter(author=author).all()
-        album_names = []
-        for album in albums:
-            album_names.append(album.album_name)
-        return JsonResponse({'status': 'existed', 'albums': album_names})
+
+    albums = Album.objects.filter(author=author)
+    album_names = [album.album_name for album in albums]
+
+    return JsonResponse({'status': 'success', 'albums': album_names})
 
 def upvote_photo(request):
-    photo_id = request.get['photo_id']
+    photo_id = request.GET['photo_id']
     photo = Photo.objects.filter(photo_id=photo_id).first()
     photo.upvotes += 1
     photo.save()
     return render(request, 'foto_crud/index.html')
 
 def remove_photo(request):
-    if request.method == 'filter':
+    if request.method == 'GET':
         return render(request, 'foto_crud/remove_photo.html')
     else:
-        # remove one photo
         photo_id = request.POST['photo_id']
-        album = request.POST['album']
-        author = request.COOKIES['cookie']
-        author = User.objects.filter(cookies=author).first()
-        record = AlbumPhoto.objects.filter(user=author, photo=photo_id, album=album).first()
-        record.delete()
+        album_name = request.POST['album']
+        author_cookie = request.COOKIES['cookie']
+        author = User.objects.filter(cookies=author_cookie).first()
+
+        photo_to_remove = AlbumPhoto.objects.filter(user=author, photo_id=photo_id, album__album_name=album_name).first()
+        photo_to_remove.delete()
+
         return render(request, 'foto_crud/remove_photo.html', {'message': 'Xóa ảnh thành công'})
-    
-def remove_multiple_photo(request):
-    if request.method == 'filter':
+
+def remove_multiple_photos(request):
+    if request.method == 'GET':
         return render(request, 'foto_crud/remove_photo.html')
     else:
-        # remove multiple photos
-        photo_ids = request.POST['photo_ids']
-        album = request.POST['album']
-        author = request.COOKIES['cookie']
-        author = User.objects.filter(cookies=author).first()
+        photo_ids = request.POST.getlist('photo_ids')
+        album_name = request.POST['album']
+        author_cookie = request.COOKIES['cookie']
+        author = User.objects.filter(cookies=author_cookie).first()
+
         for photo_id in photo_ids:
-            record = AlbumPhoto.objects.filter(user=author, photo=photo_id, album=album).first()
-            record.delete()
+            photo_to_remove = AlbumPhoto.objects.filter(user=author, photo_id=photo_id, album__album_name=album_name).first()
+            photo_to_remove.delete()
 
-        albums = Album.objects.filter(author=author).all()
         return render(request, 'foto_crud/remove_photo.html', {'message': 'Xóa ảnh thành công'})
-    
+
 def remove_album(request):
-    if request.method == 'filter':
-        return render(request, 'foto_crud/remove_album.html')
-    else:
-        album_name = request.POST['album_name']
-        author = request.COOKIES['cookie']
-        author = User.objects.filter(cookies=author).first()
-        album = Album.objects.filter(album_name=album_name, author=author).first()
-        album.delete()
+    album_name = request.GET['album']
+    author_cookie = request.COOKIES['cookie']
+    author = User.objects.filter(cookies=author_cookie).first()
 
-        for album_photo in AlbumPhoto.objects.filter(album=album).all():
-            album_photo.delete()
-
-        return render(request, 'foto_crud/remove_album.html', {'message': 'Xóa album thành công'})
+    album_to_remove = Album.objects.filter(album_name=album_name, author_id=author).first()
     
+    AlbumPhoto.objects.filter(album=album_to_remove).delete()
+    album_to_remove.delete()
 
-
-
+    return JsonResponse({'status': 'success'})
