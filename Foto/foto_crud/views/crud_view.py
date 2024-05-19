@@ -3,149 +3,159 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 from foto_crud.upload_image import ImgurUpload
+from foto_crud.views.helpers import handle_photo_upload
 from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
-from .helpers import (
-    get_user_from_cookie, 
-    get_photos_by_user, 
-    get_author_and_album, 
-    get_photos_by_album_and_author,
-    get_albums_by_author
-)
 import json
+import logging
+from .helpers import (handle_photo_upload, get_author_from_request,
+                      get_or_create_topic, get_or_create_album,
+                      handle_album_photo_save, handle_photo_removal)
 
 # Create your views here.
-def upload_photo(request):
-    if request.method == 'GET': 
-        user_cookie = request.COOKIES['cookie']
-        user = get_user_from_cookie(user_cookie)
-        albums = get_albums_by_author(user)
-        return render(request, 'upload-image.html', {'albums': albums})
-    else:
-        photo_file = request.FILES['img']
-        local_photo_path =  'E:\DUT Courses\Academic year r3\Semester 2\Lập trình Python\Photo-sharing\Foto\photos/' + photo_file.name
 
-        with open(local_photo_path, 'wb+') as destination:
-            for chunk in photo_file.chunks():
-                destination.write(chunk)
+
+def upload_photo(request):
+    try:
+        if request.method == 'GET':
+            return render(request, 'upload-image.html')
+
+        photo_file = request.FILES['img']
+        local_photo_path = handle_photo_upload(photo_file)
 
         imgur = ImgurUpload()
         try:
-            imgur_photo_link = imgur.upload_image_from_image_path(local_photo_path)
-        except:
+            imgur_photo_link = imgur.upload_image_from_image_path(
+                local_photo_path)
+        except Exception as e:
+            logging.error(f"Imgur upload failed: {e}")
             return JsonResponse({'message': 'Upload ảnh thất bại'})
-        
-        os.remove(local_photo_path)
+        finally:
+            os.remove(local_photo_path)
 
-        author_cookie = request.COOKIES['cookie']
-        author = User.objects.filter(cookies=author_cookie).first()
-
+        author = get_author_from_request(request)
         new_photo = Photo(photo_link=imgur_photo_link, author=author)
         new_photo.save()
 
         topics_uploaded = request.POST['theme'].split(',')
-        topics = []
-
-        for topic_name in topics_uploaded:
-            topic = Topic.objects.filter(topic_name=topic_name).first()
-            if topic is None:
-                topic = Topic(topic_name=topic_name)
-                topic.save()
-            topics.append(topic)
+        topics = [get_or_create_topic(topic_name)
+                  for topic_name in topics_uploaded]
 
         for topic in topics:
-            photo_topic = PhotoTopic(photo=new_photo, topic=topic)
-            photo_topic.save()
+            PhotoTopic(photo=new_photo, topic=topic).save()
 
-        album_name = request.POST['album']
-        if album_name:
-            album = Album.objects.filter(album_name=album_name, author=author).first()
-        else:
+        album_name = request.POST.get(
+            'album', f'Tất cả ảnh đã upload của {author.username}')
+        if (album_name == ''):
             album_name = f'Tất cả ảnh đã upload của {author.username}'
-            album = Album.objects.filter(album_name=album_name, author=author).first()
-            if album is None:
-                album = Album(album_name=album_name, author=author)
-                album.save()
+        album = get_or_create_album(album_name, author)
 
-        album_photo = AlbumPhoto(album=album, photo=new_photo, user=author)
-        album_photo.save()
+        handle_album_photo_save(album, new_photo, author)
 
         return JsonResponse({'status': 'success'})
+    except Exception as e:
+        logging.error(f"Error in upload_photo: {e}")
+        return JsonResponse({'message': 'Không thể upload ảnh, hãy thử lại'})
+
 
 def save_photo(request):
-    photo_id = request.GET['photo_id']
-    user_cookie = request.COOKIES['cookie']
-    user = User.objects.filter(cookies=user_cookie).first()
+    try:
+        photo_id = request.POST['photo_id']
+        user = get_author_from_request(request)
 
-    if AlbumPhoto.objects.filter(photo_id=photo_id, user=user).exists():
-        return render(request, 'foto_crud/index.html', {'message': 'Ảnh đã được lưu'})
+        if AlbumPhoto.objects.filter(photo_id=photo_id, user=user).exists():
+            return render(request, 'foto_crud/index.html', {'message': 'Ảnh đã được lưu'})
 
-    photo = Photo.objects.filter(photo_id=photo_id).first()
-    album_name = request.GET['album']
-    album = Album.objects.filter(album_name=album_name, author=user).first()
+        photo = Photo.objects.filter(photo_id=photo_id).first()
+        album_name = request.POST['album']
+        album = Album.objects.filter(
+            album_name=album_name, author=user).first()
 
-    saved_photo = AlbumPhoto(user=user, photo=photo, album=album)
-    saved_photo.save()
+        AlbumPhoto(user=user, photo=photo, album=album).save()
 
-    return render(request, 'foto_crud/index.html')
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        logging.error(f"Error in save_photo: {e}")
+        return JsonResponse({'message': 'Không thể lưu ảnh, hãy thử lại'})
+
 
 def create_album(request):
-    album_name = request.POST['new-album']
-    author_cookie = request.COOKIES['cookie']
-    author = User.objects.filter(cookies=author_cookie).first()
+    try:
+        album_name = request.POST['new-album']
+        author = get_author_from_request(request)
 
-    if not Album.objects.filter(album_name=album_name, author=author).exists():
-        album = Album(album_name=album_name, author=author)
-        album.save()
+        if Album.objects.filter(album_name=album_name, author=author).exists():
+            return JsonResponse({'status': 'fail', 'message': 'Album đã tồn tại'})
 
-    albums = Album.objects.filter(author=author)
-    album_names = [album.album_name for album in albums]
+        Album(album_name=album_name, author=author).save()
 
-    return JsonResponse({'status': 'success', 'albums': album_names})
+        albums = Album.objects.filter(author=author)
+        album_names = [album.album_name for album in albums]
+
+        return JsonResponse({'status': 'success', 'albums': album_names})
+    except Exception as e:
+        logging.error(f"Error in create_album: {e}")
+        return JsonResponse({'message': 'Không thể tạo mới album, hãy thử lại'})
+
 
 def upvote_photo(request):
-    photo_id = request.GET['photo_id']
-    photo = Photo.objects.filter(photo_id=photo_id).first()
-    photo.upvotes += 1
-    photo.save()
-    return render(request, 'foto_crud/index.html')
+    try:
+        photo_id = request.GET['photo_id']
+        photo = Photo.objects.filter(photo_id=photo_id).first()
+        photo.upvotes += 1
+        photo.save()
+        return render(request, 'foto_crud/index.html')
+    except Exception as e:
+        logging.error(f"Error in upvote_photo: {e}")
+        return JsonResponse({'message': 'Không thể upvote ảnh, hãy thử lại'})
+
 
 def remove_photo(request):
-    if request.method == 'GET':
-        return render(request, 'foto_crud/remove_photo.html')
-    else:
+    try:
+        if request.method == 'GET':
+            return render(request, 'foto_crud/remove_photo.html')
+
         photo_id = request.POST['photo_id']
         album_name = request.POST['album']
-        author_cookie = request.COOKIES['cookie']
-        author = User.objects.filter(cookies=author_cookie).first()
+        author = get_author_from_request(request)
 
-        photo_to_remove = AlbumPhoto.objects.filter(user=author, photo_id=photo_id, album__album_name=album_name).first()
-        photo_to_remove.delete()
+        handle_photo_removal(photo_id, album_name, author)
 
         return render(request, 'foto_crud/remove_photo.html', {'message': 'Xóa ảnh thành công'})
+    except Exception as e:
+        logging.error(f"Error in remove_photo: {e}")
+        return JsonResponse({'message': 'Không thể xóa ảnh, hãy thử lại'})
+
 
 def remove_multiple_photos(request):
-    if request.method == 'GET':
-        return render(request, 'foto_crud/remove_photo.html')
-    else:
+    try:
+        if request.method == 'GET':
+            return render(request, 'foto_crud/remove_photo.html')
+
         photo_ids = request.POST.getlist('photo_ids')
         album_name = request.POST['album']
-        author_cookie = request.COOKIES['cookie']
-        author = User.objects.filter(cookies=author_cookie).first()
+        author = get_author_from_request(request)
 
         for photo_id in photo_ids:
-            photo_to_remove = AlbumPhoto.objects.filter(user=author, photo_id=photo_id, album__album_name=album_name).first()
-            photo_to_remove.delete()
+            handle_photo_removal(photo_id, album_name, author)
 
         return render(request, 'foto_crud/remove_photo.html', {'message': 'Xóa ảnh thành công'})
+    except Exception as e:
+        logging.error(f"Error in remove_multiple_photos: {e}")
+        return JsonResponse({'message': 'Không thể xóa những ảnh đã chọn, hãy thử lại'})
+
 
 def remove_album(request):
-    album_name = request.GET['album']
-    author_cookie = request.COOKIES['cookie']
-    author = User.objects.filter(cookies=author_cookie).first()
+    try:
+        album_name = request.GET['album']
+        author = get_author_from_request(request)
 
-    album_to_remove = Album.objects.filter(album_name=album_name, author_id=author).first()
-    
-    AlbumPhoto.objects.filter(album=album_to_remove).delete()
-    album_to_remove.delete()
+        album_to_remove = Album.objects.filter(
+            album_name=album_name, author=author).first()
+        if album_to_remove:
+            AlbumPhoto.objects.filter(album=album_to_remove).delete()
+            album_to_remove.delete()
 
-    return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'success'})
+    except Exception as e:
+        logging.error(f"Error in remove_album: {e}")
+        return JsonResponse({'message': 'Không thể xóa album, hãy thử lại'})

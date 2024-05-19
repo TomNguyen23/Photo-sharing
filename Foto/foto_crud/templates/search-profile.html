@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block profile-manager %}
+<section>
+    <div class="container mt-5 section-title">
+        <h2>Kết quả tìm kiếm cho profile: {{ searchText }}</h2>
+        <p>Tìm thấy {{ count }} tác giả</p>
+    </div>
+</section>
+{% endblock profile-manager %}
+
+{% block my-photos %}
+<section class="container">
+    <div class="row">
+        {% for user in users %}
+            <a href="/guest-visit?username={{ user.username }}" class="col-lg-2 col-md-6 col-sm-6">
+                <div class="team-item">
+                    <img src="{% static 'img/user.png' %}" alt="">
+                    <div class="ti-text">
+                        <h5>{{user.username}}</h5>
+                        <span>n album</span>
+                    </div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+    </div>
+</section>
+{% endblock my-photos %}
