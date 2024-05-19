@@ -192,6 +192,9 @@
                 if(status['status'] === 'success') {
                     window.location.reload();
                 }
+                else if (status['message'] === 'Không thể lưu ảnh, hãy thử lại') {
+                    alert('Lỗi, Ảnh không thể lưu!');
+                }
             });
         })
     }

@@ -69,13 +69,3 @@ table .album-link {
 table .album-link:hover {
     color: grey;
 }
-
-.photo-popup {
-    position: fixed; 
-    top: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.9);
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-}

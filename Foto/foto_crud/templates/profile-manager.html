@@ -23,15 +23,34 @@
         <div class="col-lg-12 p-0">
             <div class="gallery-filter">
                 {% for photo in photos %}
-                <div class="gf-item small-height set-bg lifestyle" data-setbg="{{photo}}">
-                    <a href="{{photo}}" class="gf-icon image-popup"><span
-                            class="icon_plus"></span>
-                    </a>
+                <img src="{{photo}}" alt="" class="gf-item small-height">
+
+                <div class="photo-popup">
+                    <span><i class="fa fa-times text-light"></i></span>
+                    <img src="{{photo}}" alt="" class="image-popup">
                 </div>
                 {% endfor %}
-
             </div>
         </div>
     </div>
 </section>
 {% endblock my-photos %}
+
+{% block page_script %}
+
+<script>
+
+    document.querySelectorAll(".gf-item").forEach(item => {
+        item.addEventListener("click", function() {
+            document.querySelector(".photo-popup").style.display = "block";
+            document.querySelector(".image-popup").src = item.src;
+        });
+    });
+
+    document.querySelector(".fa-times").addEventListener("click", function() {
+        document.querySelector(".photo-popup").style.display = "none";
+    });
+
+</script>
+
+{% endblock %}
