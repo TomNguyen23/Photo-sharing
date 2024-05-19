@@ -4,7 +4,6 @@ from django.http import JsonResponse
 
 from foto_crud.upload_image import ImgurUpload
 from foto_crud.views.helpers import handle_photo_upload
-from foto_crud.views.helpers import handle_photo_upload
 from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
 import json
 import logging
@@ -88,13 +87,7 @@ def create_album(request):
             return JsonResponse({'status': 'fail', 'message': 'Album đã tồn tại'})
 
         Album(album_name=album_name, author=author).save()
-        if Album.objects.filter(album_name=album_name, author=author).exists():
-            return JsonResponse({'status': 'fail', 'message': 'Album đã tồn tại'})
 
-        Album(album_name=album_name, author=author).save()
-
-        albums = Album.objects.filter(author=author)
-        album_names = [album.album_name for album in albums]
         albums = Album.objects.filter(author=author)
         album_names = [album.album_name for album in albums]
 
@@ -121,9 +114,7 @@ def remove_photo(request):
         photo_id = request.POST['photo_id']
         album_name = request.POST['album']
         author = get_author_from_request(request)
-        author = get_author_from_request(request)
 
-        handle_photo_removal(photo_id, album_name, author)
         handle_photo_removal(photo_id, album_name, author)
 
         return render(request, 'foto_crud/remove_photo.html', {'message': 'Xóa ảnh thành công'})
@@ -139,10 +130,8 @@ def remove_multiple_photos(request):
         photo_ids = request.POST.getlist('photo_ids')
         album_name = request.POST['album']
         author = get_author_from_request(request)
-        author = get_author_from_request(request)
 
         for photo_id in photo_ids:
-            handle_photo_removal(photo_id, album_name, author)
             handle_photo_removal(photo_id, album_name, author)
 
         return render(request, 'foto_crud/remove_photo.html', {'message': 'Xóa ảnh thành công'})

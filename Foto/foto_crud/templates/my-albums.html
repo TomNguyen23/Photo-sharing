@@ -117,6 +117,30 @@
 
 
 
+    deleteAlbum.forEach(item => {
+        item.addEventListener('click', function () {
+            const album = this.getAttribute('data-name');
+
+            fetch(`/remove-album/?album=${ album }`, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                }
+            }).then(response => {
+                return response.json();
+            }).then(data => {
+                if (data['status'] === 'success') {
+                    location.reload();
+                }
+                else {
+                    alert('Album does not exist');
+                }
+            });
+        })
+    })
+
+
+
 </script>
 
 {% if message %}
