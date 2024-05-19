@@ -7,7 +7,7 @@ from foto_crud.views.helpers import handle_photo_upload
 from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
 import json
 import logging
-from .helpers import (handle_photo_upload, get_author_from_request, 
+from .helpers import (get_albums_by_author, get_user_from_cookie, handle_photo_upload, get_author_from_request, 
                      get_or_create_topic, get_or_create_album, 
                      handle_album_photo_save, handle_photo_removal)
 
@@ -65,7 +65,7 @@ def save_photo(request):
         user = get_author_from_request(request)
 
         if AlbumPhoto.objects.filter(photo_id=photo_id, user=user).exists():
-            return render(request, 'foto_crud/index.html', {'message': 'Ảnh đã được lưu'})
+            return JsonResponse({'status': 'fail', 'message': 'Ảnh đã được lưu'})
 
         photo = Photo.objects.filter(photo_id=photo_id).first()
         album_name = request.POST['album']
@@ -73,10 +73,10 @@ def save_photo(request):
 
         AlbumPhoto(user=user, photo=photo, album=album).save()
 
-        return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'success', 'message': 'Lưu ảnh thành công'})
     except Exception as e:
         logging.error(f"Error in save_photo: {e}")
-        return JsonResponse({'message': 'Không thể lưu ảnh, hãy thử lại'})
+        return JsonResponse({'status': 'fail', 'message': 'Không thể lưu ảnh, hãy thử lại'})
 
 def create_album(request):
     try:
@@ -108,16 +108,13 @@ def upvote_photo(request):
         return JsonResponse({'message': 'Không thể upvote ảnh, hãy thử lại'})
 def remove_photo(request):
     try:
-        if request.method == 'GET':
-            return render(request, 'foto_crud/remove_photo.html')
-
-        photo_id = request.POST['photo_id']
-        album_name = request.POST['album']
+        photo_id = request.GET['photo_id']
+        album_name = request.GET['album_name']
         author = get_author_from_request(request)
 
         handle_photo_removal(photo_id, album_name, author)
 
-        return render(request, 'foto_crud/remove_photo.html', {'message': 'Xóa ảnh thành công'})
+        return JsonResponse({'status': 'success', 'message': 'Xóa ảnh thành công'})
     except Exception as e:
         logging.error(f"Error in remove_photo: {e}")
         return JsonResponse({'message': 'Không thể xóa ảnh, hãy thử lại'})

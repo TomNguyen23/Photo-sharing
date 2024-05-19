@@ -37,9 +37,10 @@
     deleteImgs.forEach(deleteImg => {
         deleteImg.addEventListener('click', () => {
             const imgId = deleteImg.getAttribute('data-id');
+            const albumName = '{{ album_name }}';
 
-            if (confirm("Bạn có chắc chắn muốn xóa ảnh " + imgId) == true) {
-                fetch(`/photos-of-albums/delete?photo_id=${imgId}`, {
+            if (confirm("Bạn có chắc chắn muốn xóa ảnh này") == true) {
+                fetch(`/photos-of-albums/delete-image?photo_id=${imgId}&album_name={{album_name}}`, {
                     method: 'GET',
                     headers: {
                         'X-CSRFToken': '{{ csrf_token }}',
@@ -51,7 +52,7 @@
                 });
             }
         });
-    });
+    }); 
 
 </script>
 

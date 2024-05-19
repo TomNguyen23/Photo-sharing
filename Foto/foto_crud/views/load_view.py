@@ -29,9 +29,26 @@ def load_own_photo(request):
     user = get_user_from_cookie(user_cookie)
     if user:
         photos = get_photos_by_user(user)
-        return render(request, 'profile-manager.html', {'user': user.username, 'photos': photos})
+        return render(request, 'profile-manager.html', {'user': user, 'photos': photos})
     else:
         return render(request, 'profile-manager.html', {'error': 'User not found'})
+
+def load_own_photo_by_album(request):
+    user_cookie = request.COOKIES['cookie']
+    user = get_user_from_cookie(user_cookie)
+    album = request.GET.get('album')
+
+    if user:
+        album = Album.objects.filter(album_name=album, author=user).first()
+        photosInAlbum = get_photos_by_album_and_author(album, user)
+        photos = []
+        for photoInAlbum in photosInAlbum:
+            # query photo
+            photo = Photo.objects.filter(photo_id=photoInAlbum.photo_id).first()
+            photos.append(photo)
+        return render(request, 'photos-of-album.html', {'photos': photos, 'album_name': album.album_name, 'photos_count': len(photos)})
+    else:
+        return render(request, 'photos-of-album.html', {'error': 'Không tìm thấy người dùng'})
 
 
 def load_other_photo(request):
@@ -40,15 +57,15 @@ def load_other_photo(request):
     author, album = get_author_and_album(author_username, album_name)
     if author and album:
         photos = get_photos_by_album_and_author(album, author)
-        return render(request, 'foto_crud/load_other_photo.html', {'photos': photos})
+        return render(request, 'photos-of-album.html.html', {'photos': photos})
     else:
-        return render(request, 'foto_crud/load_other_photo.html', {'error': 'Author or album not found'})
+        return render(request, 'photos-of-album.html', {'error': 'Author or album not found'})
 
 
 def load_album(request):
     user_cookie = request.COOKIES['cookie']
     if request.GET.get('album') is not None:
-        return load_image_by_album(request)
+        return load_own_photo_by_album(request)
     user = get_user_from_cookie(user_cookie)
     if user:
         albums = get_albums_by_author(user)
@@ -72,14 +89,15 @@ def load_photo_topic(request):
 
     photos_excluded = get_other_authors_photos(user)
 
-    for photo in photos_excluded:
-        print (photo.photo_link)
+    albums = get_albums_by_author(user)
+    if user:
+        albums = [album for album in albums if album.album_name != 'Tất cả ảnh đã upload của ' + user.username]
 
     result = []
 
     for photo in photos_excluded:
         result_object = {}
-        result_object['photo'] = photo.photo_link
+        result_object['photo'] = photo
 
         topics = PhotoTopic.objects.filter(photo=photo).all()
         topic_names = [topic.topic.topic_name for topic in topics]
@@ -88,12 +106,12 @@ def load_photo_topic(request):
         for topic_name in topic_names:
             topic_result.append(topic_name)
 
+        topic_result = ' '.join(topic_result)
+
         result_object['topics'] = topic_result
         result.append(result_object)
 
-    print (result)
-
-    return render(request, 'example.html', {'photos': result})
+    return render(request, 'gallery.html', {'photos': result, 'albums': albums})
 
 def photoOfAlbum(request):
     return render(request, 'photos-of-album.html')
@@ -126,22 +144,6 @@ def load_guest_profile(request):
         'photoCount': 15,
         'albums': albums
     })
-
-def load_gallery(request):
-    TOPICS1 = ['natural', 'fashion', 'animals']
-    TOPICS2 = ['lifestyle', 'city', 'country']
-    current_user = get_user_from_cookie(request.COOKIES['cookie'])
-    photos = get_other_photos(current_user)[0:5]
-    gallery = []
-    index = 0
-    for photo in photos:
-        gallery.append({
-            "photo": photo,
-            "topics": str(TOPICS1[index % 3] + ' ' + TOPICS2[index % 3])
-        })
-        index += 1
-    albums = Album.objects.filter(author=current_user).all()
-    return render(request, 'gallery.html', {'gallery': gallery, 'albums': albums})
 
 def load_image_by_album(request):
     username = request.COOKIES['cookie']

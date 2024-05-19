@@ -81,7 +81,7 @@
                     'photo_id': photo_id
                 },
                 success: function (data) {
-                    if (data['message'] == 'success')
+                    if (data['status'] == 'success')
                         alert(data['message']);
                     else
                         alert(data['message']);
