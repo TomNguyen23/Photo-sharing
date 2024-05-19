@@ -16,7 +16,6 @@ def home(request):
         user = get_user_from_cookie(user_cookie)
     except:
         user = None
-        
     albums = get_albums_by_author(user)
     other_photos = get_other_photos(user)
     return render(request, 'home.html', {'user': user, 
