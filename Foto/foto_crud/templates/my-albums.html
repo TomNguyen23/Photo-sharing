@@ -5,7 +5,7 @@
 <section>
     <div class="user">
         <img src="{% static 'img/user.png' %}" alt="">
-        <h2 class="username">{{user.username}}</h2>
+        <h2 class="username">{{user}}</h2>
 
         <!-- <a class="upload-btn" href="">Thêm album</a> -->
         <button type="button" class="upload-btn" data-toggle="modal" data-target="#newAlbum">
@@ -52,7 +52,7 @@
                         <i class="fa fa-folder"></i> {{album.album_name}}
                     </a>
                 </td>
-                <td class="col"><a href="/remove-album/?album={{ album.album_name }}" class="btn btn-danger text-white font-weight-bold">Xóa</a></td>
+                <td class="col"><button data-name="{{ album.album_name }}" class="btn btn-danger text-white font-weight-bold delete-album">Xóa</button></td>
             </tr>
             {% endfor %}
             

@@ -24,10 +24,17 @@
             <div class="gallery-filter">
                 {% for photo in photos %}
                 
-                <div class="gf-item small-height set-bg lifestyle" data-setbg="{{photo.photo_link}}">
+                <!-- <div class="gf-item small-height set-bg lifestyle" data-setbg="{{photo.photo_link}}">
                     <a href="{{photo.photo_link}}" class="gf-icon image-popup"><span
                             class="icon_plus"></span>
                     </a>
+                </div> -->
+
+                <img src="{{photo.photo_link}}" alt="" class="gf-item small-height">
+
+                <div class="photo-popup">
+                    <span><i class="fa fa-times"></i></span>
+                    <img src="{{photo.photo_link}}" alt="" class="image-popup">
                 </div>
                 {% endfor %}
             </div>
