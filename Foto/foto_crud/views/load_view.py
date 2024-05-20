@@ -147,7 +147,7 @@ def load_guest_profile(request):
     return render(request, 'guest-visit.html', {
         'user': user,
         'photos': photos,
-        'photoCount': 15,
+        'photoCount': len(photos),
         'albums': albums
     })
 

@@ -11,7 +11,7 @@
 
 .gf-item:hover {
     cursor: pointer;
-    background-color: rgba(0, 0, 0, 0.8);
+    opacity: 0.7;
 }
 
 .photo-popup .fa-times {
@@ -33,6 +33,45 @@
     max-height: 90%;
     z-index: 100;
     object-fit: cover;
+}
+
+.text-tranform {
+    text-transform: none !important;
+    font-family: "Open Sans", sans-serif;
+}
+
+.dropdown-home {
+    transform: translate3d(-100px, 75px, 0px) !important;
+}
+
+.user-item {
+    padding: 30px 30px 0 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.4s;  
+}
+
+.user-item:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.option {
+    align-self: self-end;
+}
+
+table .album-icon {
+    width: 11.75rem;
+    margin-right: 30px;
+}
+
+table .album-icon:hover {
+    background-color: #f5f5f5;
+}
+
+.font-weight-bolds {
+    font-weight: 700 !important;
+    font-size: 1.1rem;
+    color: black;
 }
 
 @media (max-width: 768px) {

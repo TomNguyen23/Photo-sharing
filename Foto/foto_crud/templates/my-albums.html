@@ -43,16 +43,28 @@
 
 {% block my-albums %}
 <section class="container">
-    <table class="table table-borderless">
-        <tbody>
+    <table class="table table-borderless mt-2">
+        <tbody class="d-flex">
             {% for album in albums %}
-            <tr class="row">
-                <td class="album-icon col-11">
+            <tr class="d-flex">
+                <td class="album-icon">
                     <a class="album-link" href="/my-albums?album={{album.album_name}}">
-                        <i class="fa fa-folder"></i> {{album.album_name}}
+                        <i class="fa fa-folder fa-5x text-muted" aria-hidden="true"></i>
                     </a>
+
+                    <div class="d-flex justify-content-around align-items-start">
+                        <p class="font-weight-bolds album-name" title="{{album.album_name}}">{{album.album_name}}</p>
+    
+                        <div class="dropdown">
+                            <div type="button" data-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-ellipsis-v fa-lg text-muted font-weight-light" aria-hidden="true"></i>
+                            </div>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <div type="button" data-name="{{ album.album_name }}" class="font-weight-bold text-danger pl-4 py-0 delete-album">Xóa album</div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
-                <td class="col"><button data-name="{{ album.album_name }}" class="btn btn-danger text-white font-weight-bold delete-album">Xóa</button></td>
             </tr>
             {% endfor %}
             
@@ -64,6 +76,15 @@
 {% block page_script %}
 
 <script>
+    window.onload = function() {
+        var albumNames = document.querySelectorAll('.album-name');
+        albumNames.forEach(function(album) {
+            if (album.innerText.length > 20) {
+                album.innerText = album.innerText.substring(0, 20) + '...';
+            }
+        });
+    }
+
     const newAlbumBtn = document.querySelector('.new-album-btn');
     const deleteAlbum = document.querySelectorAll('.delete-album');
 
@@ -97,50 +118,22 @@
         item.addEventListener('click', function () {
             const album = this.getAttribute('data-name');
 
-            fetch(`/remove-album/?album=${ album }`, {
+            if (confirm("Bạn có chắc chắn muốn xóa album này") == true) {
+                fetch(`/remove-album/?album=${ album }`, {
                 method: 'GET',
                 headers: {
                     'X-CSRFToken': '{{ csrf_token }}',
                 }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
-                if (data['status'] === 'success') {
-                    location.reload();
-                }
-                else {
-                    alert('Album does not exist');
-                }
-            });
+                }).then(response => {
+                    return response.json();
+                }).then(data => {
+                    if (data['status'] === 'success') {
+                        location.reload();
+                    }
+                });
+            }
         })
     })
-
-
-
-    deleteAlbum.forEach(item => {
-        item.addEventListener('click', function () {
-            const album = this.getAttribute('data-name');
-
-            fetch(`/remove-album/?album=${ album }`, {
-                method: 'GET',
-                headers: {
-                    'X-CSRFToken': '{{ csrf_token }}',
-                }
-            }).then(response => {
-                return response.json();
-            }).then(data => {
-                if (data['status'] === 'success') {
-                    location.reload();
-                }
-                else {
-                    alert('Album does not exist');
-                }
-            });
-        })
-    })
-
-
-
 </script>
 
 {% if message %}
