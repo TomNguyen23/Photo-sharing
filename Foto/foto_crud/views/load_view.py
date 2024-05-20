@@ -103,6 +103,7 @@ def load_photo_topic(request):
         topic_names = [topic.topic.topic_name for topic in topics]
 
         topic_result = []
+
         for topic_name in topic_names:
             topic_result.append(topic_name)
 
@@ -120,17 +121,22 @@ def photoOfAlbum(request):
 
 
 def load_user_search(request):
-    return render(request, 'search-profile.html',
-                  {
-                      'searchText': request.GET.get('search'),
-                      'users': User.objects.filter(username__icontains=request.GET.get('search')).all(),
-                      'count': User.objects.filter(username__icontains=request.GET.get('search')).count()
-                  })
+    user_cookie = request.COOKIES['cookie']
+    user = get_user_from_cookie(user_cookie)
+
+    searchText = request.GET.get('search')
+    if searchText is None:
+        return render(request, 'search-profile.html', {'searchText': '', 'users': [], 'count': 0})
+    else:
+        users = User.objects.filter(username__icontains=searchText).exclude(username=user.username)
+        count = len(users)
+        return render(request, 'search-profile.html', {'searchText': searchText, 'users': users, 'count': count})
 
 
 def load_guest_profile(request):
     current_user = get_user_from_cookie(request.COOKIES['cookie'])
-    albums = Album.objects.filter(author=current_user).all()
+    albums = get_albums_by_author(current_user)
+    albums = [album for album in albums if album.album_name != 'Tất cả ảnh đã upload của ' + current_user.username]
     user = request.GET.get('username')
     # query userId
     user = User.objects.filter(username=user).first()
