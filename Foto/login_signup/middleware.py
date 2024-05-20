@@ -1,3 +1,4 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from foto_crud.models import User
 
@@ -12,15 +13,13 @@ class AuthMiddleware:
         cookie_name = 'cookie'
         if cookie_name not in request.COOKIES:
             # redirect to login page
-            return render(request, 'sign-in.html', {
-                'error': 'Bạn cần đăng nhập để truy cập trang này.'
-            })
+            response = HttpResponseRedirect('/login')
+            return response
         cookie = request.COOKIES[cookie_name]
         user = User.objects.filter(cookies=cookie).first()
         if not user:
-            return render(request, 'sign-in.html', {
-                'error': 'Phiên đăng nhập đã hết hạn. Bạn cần đăng nhập để truy cập trang này.'
-            })
+            reponse = HttpResponseRedirect('/login')
+            return response
         request.user = user
         response = self.get_response(request)
         return response

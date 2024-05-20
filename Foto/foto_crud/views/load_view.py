@@ -103,8 +103,20 @@ def load_photo_topic(request):
         topic_names = [topic.topic.topic_name for topic in topics]
 
         topic_result = []
+
+        # mapping topic: 'Thời trang' -> 'Fashion', 'Lối sống' -> 'Lifestyle', 'Thiên nhiên' -> 'Nature', 'Động vật' -> 'Animal', 'Đô thị' -> 'City', 'Làng quê' -> 'Country', 'Khác' -> 'Other'
+        topic_mapping = {
+            'Thời trang': 'fashion',
+            'Lối sống': 'lifestyle',
+            'Thiên nhiên': 'natural',
+            'Động vật': 'animal',
+            'Đô thị': 'city',
+            'Làng quê': 'country',
+            'Khác': 'other'
+        }
+
         for topic_name in topic_names:
-            topic_result.append(topic_name)
+            topic_result.append(topic_mapping[topic_name])
 
         topic_result = ' '.join(topic_result)
 
