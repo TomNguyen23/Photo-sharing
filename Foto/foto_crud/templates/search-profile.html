@@ -19,7 +19,6 @@
                     <img src="{% static 'img/user.png' %}" alt="">
                     <div class="ti-text">
                         <h5>{{user.username}}</h5>
-                        <span>n album</span>
                     </div>
                 </div>
             </a>
@@ -28,3 +27,23 @@
     </div>
 </section>
 {% endblock my-photos %}
+
+{% block page_script %}
+<script>
+    var userItems = document.querySelectorAll('.user-item');
+
+    var maxHeight = 0;
+
+    userItems.forEach(function(userItem) {
+        var height = userItem.offsetHeight;
+        
+        if(height > maxHeight) {
+            maxHeight = height;
+        }
+    });
+
+    userItems.forEach(function(userItem) {
+        userItem.style.height = maxHeight + 'px';
+    });
+</script>
+{% endblock page_script %}

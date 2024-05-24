@@ -1,3 +1,5 @@
+from random import shuffle
+
 from django.shortcuts import render
 from ..models import Photo, User, Topic, PhotoTopic, Album, AlbumPhoto
 from .helpers import (
@@ -20,6 +22,9 @@ def home(request):
     if user:
         albums = [album for album in albums if album.album_name != 'Tất cả ảnh đã upload của ' + user.username]
     other_photos = get_other_authors_photos(user)
+    # shuffle other_photos
+    other_photos = list(other_photos)
+    shuffle(other_photos)
     return render(request, 'home.html', {'user': user, 
                                          'albums': albums, 
                                          'other_photos': other_photos})
@@ -84,11 +89,16 @@ def load_other_album(request):
         return render(request, 'foto_crud/load_other_album.html', {'error': 'Author not found'})
     
 def load_photo_topic(request):
-    user_cookie = request.COOKIES['cookie']
-    user = get_user_from_cookie(user_cookie)
+    try:
+        user_cookie = request.COOKIES['cookie']
+        user = get_user_from_cookie(user_cookie)
+    except:
+        user = ''
 
     photos_excluded = get_other_authors_photos(user)
-
+    # shuffle other_photos
+    photos_excluded = list(photos_excluded)
+    shuffle(photos_excluded)
     albums = get_albums_by_author(user)
     if user:
         albums = [album for album in albums if album.album_name != 'Tất cả ảnh đã upload của ' + user.username]
@@ -121,27 +131,38 @@ def photoOfAlbum(request):
 
 
 def load_user_search(request):
-    user_cookie = request.COOKIES['cookie']
-    user = get_user_from_cookie(user_cookie)
+    try:
+        user_cookie = request.COOKIES['cookie']
+        user = get_user_from_cookie(user_cookie)
+    except:
+        user = ''
 
     searchText = request.GET.get('search')
     if searchText is None:
         return render(request, 'search-profile.html', {'searchText': '', 'users': [], 'count': 0})
     else:
-        users = User.objects.filter(username__icontains=searchText).exclude(username=user.username)
+        if user == '':
+            users = User.objects.filter(username__icontains=searchText)
+        else:
+            users = User.objects.filter(username__icontains=searchText).exclude(username=user.username)
         count = len(users)
         return render(request, 'search-profile.html', {'searchText': searchText, 'users': users, 'count': count})
 
 
 def load_guest_profile(request):
-    current_user = get_user_from_cookie(request.COOKIES['cookie'])
-    albums = get_albums_by_author(current_user)
-    albums = [album for album in albums if album.album_name != 'Tất cả ảnh đã upload của ' + current_user.username]
+    try:
+        user_cookie = request.COOKIES['cookie']
+        user = get_user_from_cookie(user_cookie)
+    except:
+        user = ''
+    albums = get_albums_by_author(user)
+    albums = [album for album in albums if album.album_name != 'Tất cả ảnh đã upload của ' + user.username]
     user = request.GET.get('username')
     # query userId
     user = User.objects.filter(username=user).first()
     if user:
         photos = Photo.objects.filter(author_id=user).all()
+        photos = [photo for photo in photos if AlbumPhoto.objects.filter(photo_id=photo.photo_id).exists()]
     else:
         return render(request, 'guest-visit.html', {'error': 'User not found'})
     return render(request, 'guest-visit.html', {

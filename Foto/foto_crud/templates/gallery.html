@@ -44,7 +44,7 @@
                 <div class="col-lg-12 p-0">
                     <div class="gallery-filter">
                         {% for gallery_item in photos %}
-                        <div class="gf-item set-bg small-height {{gallery_item.topics}}"
+                        <div class="gf-item set-bg {{gallery_item.topics}}"
                             data-setbg="{{ gallery_item.photo.photo_link }}">
                             <div type="button" class="gf-icon" data-toggle="modal"
                                 data-target="#exampleModalCenter{{ gallery_item.photo.photo_id}}">
@@ -58,7 +58,7 @@
                             <form class="modal-dialog modal-dialog-centered modal-lg" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header border-bottom-0">
-                                        <h5 class="modal-title" id="exampleModalCenterTitle">Lưu ảnh này</h5>
+                                        <h5 class="modal-title" id="exampleModalCenterTitle">{{gallery_item.photo.author.username}}</h5>
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span>
                                         </button>
@@ -67,6 +67,8 @@
                                         <img src="{{ gallery_item.photo.photo_link }}" class="gf-icon modal-img-holder"
                                             photo-id="{{ gallery_item.photo.photo_id }}" alt="">
                                     </div>
+
+                                    {% if 'cookie' in request.COOKIES %}
                                     <div class="modal-footer input-group border-top-0">
                                         <input type="text" hidden value=" ">
                                         <select class="custom-select col-3 rounded album-name">
@@ -77,6 +79,7 @@
                                         </select>
                                         <button type="button" class="btn btn-primary album-save">Lưu</button>
                                     </div>
+                                    {% endif %}
                                 </div>
                             </form>
                         </div>

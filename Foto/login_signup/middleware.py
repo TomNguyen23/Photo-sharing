@@ -6,7 +6,9 @@ class AuthMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
     def __call__(self, request):
-        if request.path in ['/login', '/signup', '/logout', '/login/', '/signup/', '/logout/', '/', '/home/', '/home']:
+        if request.path in ['/login', '/signup', '/logout', '/login/', '/signup/', '/logout/', 
+                            '/', '/home/', '/home', '/gallery', '/gallery/', '/search-profile',
+                            '/search-profile/', '/guest-visit', '/guest-visit/']:
             response = self.get_response(request)
             return response
         

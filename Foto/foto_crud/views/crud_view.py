@@ -65,7 +65,7 @@ def save_photo(request):
         user = get_author_from_request(request)
 
         if AlbumPhoto.objects.filter(photo_id=photo_id, user=user).exists():
-            return JsonResponse({'status': 'fail', 'message': 'Ảnh đã được lưu'})
+            return JsonResponse({'status': 'fail', 'message': 'Ảnh đã từng được lưu!'})
 
         photo = Photo.objects.filter(photo_id=photo_id).first()
         album_name = request.POST['album']
